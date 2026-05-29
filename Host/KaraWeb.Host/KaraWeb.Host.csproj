@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+	<OutputType>Exe</OutputType>
+    <RootNamespace>KaraWeb.Host</RootNamespace>
+    <AssemblyName>KaraWeb.Host</AssemblyName>
+    <StartupObject>KaraWeb.Host.EntryPoint</StartupObject>
+    <ConfigFilesNeeded>true</ConfigFilesNeeded>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KaraWeb.Core\KaraWeb.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Swashbuckle.AspNetCore" />
+	<PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
+  </ItemGroup>
+</Project>

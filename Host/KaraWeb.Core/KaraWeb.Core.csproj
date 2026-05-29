@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <RootNamespace>KaraWeb.Core</RootNamespace>
+        <AssemblyName>KaraWeb.Core</AssemblyName>
+    </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Update="log4net" />
+	</ItemGroup>
+</Project>
