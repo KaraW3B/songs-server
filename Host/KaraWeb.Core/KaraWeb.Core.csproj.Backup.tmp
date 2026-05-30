@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <RootNamespace>KaraWeb.Core</RootNamespace>
+        <AssemblyName>KaraWeb.Core</AssemblyName>
+    </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="log4net" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Models\Jobs\" />
+	</ItemGroup>
+</Project>

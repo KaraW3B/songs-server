@@ -7,14 +7,18 @@ using Microsoft.OpenApi;
 using System;
 using System.IO;
 using System.Reflection;
+using KaraWeb.Core.Services.CollectionsAnalyzer;
+using KaraWeb.Core.Services.SongParser;
+using KaraWeb.Host.Providers.Songs;
 
 namespace KaraWeb.Host
 {
-    public class Startup
+    internal sealed class Startup
     {
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<KaraWebDbContext>();
+
             services.AddControllers();
             services.AddSignalR();
 
@@ -27,12 +31,22 @@ namespace KaraWeb.Host
                 c.SwaggerDoc(Constants.ProjectName, new OpenApiInfo { Title = Constants.ProjectName, Version = $"{GetType().Assembly.GetName().Version}" });
             });
 
+            RegisterServices(services);
             RegisterProviders(services);
+        }
+
+        private void RegisterServices(IServiceCollection services)
+        {
+            services
+                .AddSingleton<ICollectionsAnalyzerService, CollectionsAnalyzerService>()
+                .AddSingleton<ISongParserService, SongParserService>();
         }
 
         private void RegisterProviders(IServiceCollection services)
         {
-            services.AddSingleton<ICollectionsProvider, CollectionsProvider>();
+            services
+                .AddSingleton<ICollectionsProvider, CollectionsProvider>()
+                .AddSingleton<ISongsProvider, SongsProvider>();
         }
 
         public void Configure(IApplicationBuilder app)

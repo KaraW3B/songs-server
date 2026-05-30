@@ -5,6 +5,7 @@
     <LangVersion>11.0</LangVersion>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <FileVersion>1.0.0.0</FileVersion>

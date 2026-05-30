@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace KaraWeb.Host
 {
-    public class EntryPoint
+    internal sealed class EntryPoint
     {
         public static async Task Main(string[] args)
         {
@@ -46,16 +46,14 @@ namespace KaraWeb.Host
                     logger.Info("Created config directory");
                 }
 
-                using (var context = new KaraWebDbContext())
-                {
-                    await context.Database.MigrateAsync();
-                    logger.Info("Database initialized successfully");
-                }
+                await using var context = new KaraWebDbContext();
+                await context.Database.MigrateAsync();
+                logger.Info("Database initialized successfully");
                 return true;
             }
             catch (Exception ex)
             {
-                logger.Fatal($"Error when intializing the database: {ex}");
+                logger.Fatal($"Error when initializing the database: {ex}");
                 return false;
             }
         }

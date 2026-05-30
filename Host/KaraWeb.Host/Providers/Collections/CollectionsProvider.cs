@@ -1,22 +1,25 @@
 ﻿using KaraWeb.Core;
-using KaraWeb.Core.Models;
+using KaraWeb.Core.Models.Collections;
 using KaraWeb.Host.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using KaraWeb.Core.Models.Jobs;
+using KaraWeb.Core.Services.CollectionsAnalyzer;
 
 namespace KaraWeb.Host.Providers.Collections
 {
-    public class CollectionsProvider : ICollectionsProvider
+    internal sealed class CollectionsProvider : ICollectionsProvider
     {
-        private KaraWebDbContext _dbContext;
+        private readonly KaraWebDbContext _dbContext;
+        private readonly ICollectionsAnalyzerService _collectionsAnalyzerService;
 
-        public CollectionsProvider(KaraWebDbContext dbContext)
+        public CollectionsProvider(KaraWebDbContext dbContext, ICollectionsAnalyzerService collectionsAnalyzerService)
         {
             _dbContext = dbContext;
+            _collectionsAnalyzerService = collectionsAnalyzerService;
         }
 
         public IAsyncEnumerable<Collection> GetCollectionsAsync(CancellationToken cancellationToken)
@@ -24,7 +27,7 @@ namespace KaraWeb.Host.Providers.Collections
             return _dbContext.Collections.ToAsyncEnumerable();
         }
 
-        public Task<Collection> GetCollectionAsync(Guid collectionId, CancellationToken cancellationToken)
+        public Task<Collection> GetCollectionAsync(int collectionId, CancellationToken cancellationToken)
         {
             return _dbContext.Collections.Where(c => c.Id == collectionId).FirstOrDefaultAsync(cancellationToken);
         }
@@ -33,12 +36,11 @@ namespace KaraWeb.Host.Providers.Collections
         {
             var newCollection = new Collection
             {
-                Id = Guid.NewGuid(),
                 Name = payload.Name,
-                Decription = payload.Description,
+                Description = payload.Description,
                 Path = payload.Path
             };
-            var collectionEntry = await _dbContext.Collections.AddAsync(newCollection);
+            var collectionEntry = await _dbContext.Collections.AddAsync(newCollection, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
             return collectionEntry.Entity;
         }
@@ -48,5 +50,10 @@ namespace KaraWeb.Host.Providers.Collections
             _dbContext.Collections.Remove(collection);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
+
+        public Task<Job> StartCollectionAnalyzeAsync(Collection collection, CancellationToken cancellationToken)
+        {
+            return _collectionsAnalyzerService.StartCollectionAnalyzeAsync(collection, cancellationToken);
+;        }
     }
 }
