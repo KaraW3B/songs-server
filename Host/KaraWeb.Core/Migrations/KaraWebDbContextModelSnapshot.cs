@@ -136,6 +136,9 @@ namespace KaraWeb.Core.Migrations
                     b.PrimitiveCollection<string>("Genres")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("HasEofMarker")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Instrumental")
                         .HasColumnType("TEXT");
 
@@ -224,7 +227,7 @@ namespace KaraWeb.Core.Migrations
             modelBuilder.Entity("KaraWeb.Core.Models.Songs.Notes.SongNote", b =>
                 {
                     b.HasOne("KaraWeb.Core.Models.Songs.Song", "Song")
-                        .WithMany()
+                        .WithMany("Notes")
                         .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -254,6 +257,8 @@ namespace KaraWeb.Core.Migrations
 
             modelBuilder.Entity("KaraWeb.Core.Models.Songs.Song", b =>
                 {
+                    b.Navigation("Notes");
+
                     b.Navigation("Players");
                 });
 #pragma warning restore 612, 618

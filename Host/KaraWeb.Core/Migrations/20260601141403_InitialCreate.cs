@@ -65,7 +65,8 @@ namespace KaraWeb.Core.Migrations
                     Errors = table.Column<string>(type: "TEXT", nullable: true),
                     Warnings = table.Column<string>(type: "TEXT", nullable: true),
                     SongFilePath = table.Column<string>(type: "TEXT", nullable: false),
-                    AnalyzedFileHash = table.Column<string>(type: "TEXT", nullable: false)
+                    AnalyzedFileHash = table.Column<string>(type: "TEXT", nullable: false),
+                    HasEofMarker = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

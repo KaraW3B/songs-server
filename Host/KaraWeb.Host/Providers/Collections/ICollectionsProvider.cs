@@ -1,10 +1,10 @@
 ﻿using System;
 using KaraWeb.Core.Models.Collections;
-using KaraWeb.Host.Models;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using KaraWeb.Core.Models.Jobs;
+using KaraWeb.Host.Models.Collections;
 
 namespace KaraWeb.Host.Providers.Collections
 {
@@ -14,6 +14,6 @@ namespace KaraWeb.Host.Providers.Collections
         Task<Collection> GetCollectionAsync(Guid collectionId, CancellationToken cancellationToken);
         Task<Collection> CreateCollectionAsync(CollectionPayload payload, CancellationToken cancellationToken);
         Task DeleteCollectionAsync(Collection collection, CancellationToken cancellationToken);
-        Task<Job> StartCollectionAnalyzeAsync(Collection collection, CancellationToken cancellationToken);
+        Task<Job> StartCollectionAnalyzeAsync(Collection collection, CollectionAnalyzeType analyzeType, CancellationToken cancellationToken);
     }
 }

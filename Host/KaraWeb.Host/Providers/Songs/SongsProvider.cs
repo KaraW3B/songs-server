@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using KaraWeb.Core;
 using KaraWeb.Core.Models.Collections;
 using KaraWeb.Core.Models.Songs;
-using KaraWeb.Core.Models.Songs.Notes;
 using Microsoft.EntityFrameworkCore;
 
 namespace KaraWeb.Host.Providers.Songs
@@ -28,11 +27,6 @@ namespace KaraWeb.Host.Providers.Songs
         public Task<Song> GetSong(Guid songId, CancellationToken cancellationToken)
         {
             return _dbContext.Songs.SingleOrDefaultAsync(s => s.Id == songId, cancellationToken: cancellationToken);
-        }
-
-        public IAsyncEnumerable<SongNote> GetSongNotes(Song song, CancellationToken cancellationToken)
-        {
-            return _dbContext.SongNotes.Where(n => n.SongId == song.Id).OrderBy(n => n.PlayerNumber).ThenBy(n => n.StartBeat).ToAsyncEnumerable();
         }
     }
 }

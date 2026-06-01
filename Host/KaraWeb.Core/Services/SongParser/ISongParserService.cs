@@ -8,6 +8,6 @@ namespace KaraWeb.Core.Services.SongParser
 {
     public interface ISongParserService
     {
-        Task<SongParsingResult> ParseSongAsync(Guid collectionId, FileInfo songFile, CancellationToken cancellationToken);
+        Task<Song> ParseSongAsync(Guid collectionId, FileInfo songFile, string fileHash, CancellationToken cancellationToken);
     }
 }

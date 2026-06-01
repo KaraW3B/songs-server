@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace KaraWeb.Host.Models
+namespace KaraWeb.Host.Models.Collections
 {
     /// <summary>
     /// The payload to create a collection
@@ -30,13 +30,13 @@ namespace KaraWeb.Host.Models
 
         public bool IsValid(out string error)
         {
-            if (string.IsNullOrWhiteSpace(Name))
+            if (string.IsNullOrEmpty(Name))
             {
                 error = "A name is mandatory";
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(Path))
+            if (string.IsNullOrEmpty(Path))
             {
                 error = "A path is mandatory";
                 return false;

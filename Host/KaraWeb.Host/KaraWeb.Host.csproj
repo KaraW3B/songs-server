@@ -15,4 +15,10 @@
 	<PackageReference Include="Swashbuckle.AspNetCore" />
 	<PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config\config.log4net.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

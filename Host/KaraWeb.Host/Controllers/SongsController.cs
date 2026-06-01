@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using KaraWeb.Core.Models.Songs.Notes;
@@ -60,7 +59,7 @@ namespace KaraWeb.Host.Controllers
                 return NotFound($"The song with ID {songId} doesn't exist");
             }
 
-            return Ok(await _songsProvider.GetSongNotes(song, cancellationToken).ToListAsync(cancellationToken));
+            return Ok(song.Notes);
         }
     }
 }

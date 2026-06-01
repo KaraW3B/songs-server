@@ -7,6 +7,6 @@ namespace KaraWeb.Core.Services.CollectionsAnalyzer
 {
     public interface ICollectionsAnalyzerService
     {
-        Task<Job> StartCollectionAnalyzeAsync(Collection collection, CancellationToken cancellationToken);
+        Task<Job> StartCollectionAnalyzeAsync(Collection collection, CollectionAnalyzeType analyzeType, CancellationToken cancellationToken);
     }
 }

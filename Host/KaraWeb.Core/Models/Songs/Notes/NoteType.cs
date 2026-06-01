@@ -7,6 +7,7 @@
     {
         Unknow,
         Eol,
+        Eof,
         Regular,
         Golden,
         Rap,

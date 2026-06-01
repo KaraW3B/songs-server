@@ -1,10 +1,10 @@
 ﻿using KaraWeb.Core.Models.Collections;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using KaraWeb.Core.Models.Songs.Notes;
 
 namespace KaraWeb.Core.Models.Songs
 {
@@ -237,6 +237,12 @@ namespace KaraWeb.Core.Models.Songs
         #region Internal
 
         /// <summary>
+        /// The set of all song's notes
+        /// </summary>
+        [JsonIgnore]
+        public List<SongNote> Notes { get; set; } = new();
+
+        /// <summary>
         /// The path to the song TXT file
         /// </summary>
         [JsonIgnore]
@@ -249,6 +255,12 @@ namespace KaraWeb.Core.Models.Songs
         [JsonIgnore]
         [Required]
         public string AnalyzedFileHash { get; set; }
+
+        /// <summary>
+        /// Flags that indicates if the file contains the E flag
+        /// </summary>
+        [JsonIgnore]
+        public bool HasEofMarker { get; set; }
 
         #endregion
     }

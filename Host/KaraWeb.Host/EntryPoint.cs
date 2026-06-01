@@ -1,11 +1,13 @@
 using KaraWeb.Core;
 using KaraWeb.Core.Helpers;
 using log4net;
+using log4net.Config;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace KaraWeb.Host
@@ -33,6 +35,8 @@ namespace KaraWeb.Host
 
         private static ILog ConfigureLog4NetAndGetLogger()
         {
+            var logRepository = LogManager.GetRepository(Assembly.GetExecutingAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo(Constants.Log4NetConfigPath));
             return LogManager.GetLogger(Constants.ProjectName);
         }
 
@@ -40,10 +44,10 @@ namespace KaraWeb.Host
         {
             try
             {
-                if (!Directory.Exists(Constants.ConfigPath))
+                if (!Directory.Exists(Constants.DataPath))
                 {
-                    Directory.CreateDirectory(Constants.ConfigPath);
-                    logger.Info("Created config directory");
+                    Directory.CreateDirectory(Constants.DataPath);
+                    logger.Info("Created data directory");
                 }
 
                 await using var context = new KaraWebDbContext();

@@ -1,6 +1,5 @@
 ﻿using System;
 using KaraWeb.Core.Helpers;
-using KaraWeb.Host.Models;
 using KaraWeb.Host.Providers.Collections;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +12,7 @@ using KaraWeb.Host.Providers.Songs;
 using KaraWeb.Core.Models.Songs;
 using KaraWeb.Core.Models.Collections;
 using KaraWeb.Core.Models.Jobs;
+using KaraWeb.Host.Models.Collections;
 
 namespace KaraWeb.Host.Controllers
 {
@@ -102,11 +102,12 @@ namespace KaraWeb.Host.Controllers
         /// Start a collection analyze by its ID
         /// </summary>
         /// <param name="collectionId">The ID of the collection to analyze</param>
+        /// <param name="payload">Payload containing analyze options</param>
         /// <param name="cancellationToken"></param>
         [HttpPost("{collectionId}/do-start-analyze")]
         [SwaggerResponse(StatusCodes.Status202Accepted, "The created analyze job", typeof(Job))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "No collection found with the given ID", typeof(string))]
-        public async Task<ActionResult<Job>> StartCollectionAnalyzeAsync([FromRoute] Guid collectionId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<Job>> StartCollectionAnalyzeAsync([FromRoute] Guid collectionId, [FromBody] CollectionAnalyzePayload payload, CancellationToken cancellationToken = default)
         {
             var collection = await _collectionsProvider.GetCollectionAsync(collectionId, cancellationToken);
             if (collection == null)
@@ -115,7 +116,7 @@ namespace KaraWeb.Host.Controllers
             }
 
 
-            return Ok(await _collectionsProvider.StartCollectionAnalyzeAsync(collection, cancellationToken));
+            return Ok(await _collectionsProvider.StartCollectionAnalyzeAsync(collection, payload.AnalyzeType, cancellationToken));
         }
 
         /// <summary>

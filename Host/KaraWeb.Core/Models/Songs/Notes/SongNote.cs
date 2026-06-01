@@ -22,7 +22,7 @@ namespace KaraWeb.Core.Models.Songs.Notes
         [ForeignKey(nameof(Song))]
         [JsonIgnore]
         [Required]
-        public Guid? SongId { get; set; }
+        public Guid SongId { get; set; }
         [JsonIgnore]
         public Song Song { get; set; }
 
@@ -30,19 +30,19 @@ namespace KaraWeb.Core.Models.Songs.Notes
         /// The note's type
         /// </summary>
         [Required]
-        public NoteType? Type { get; set; }
+        public NoteType Type { get; set; }
 
         /// <summary>
         /// The related player
         /// </summary>
         [Required]
-        public int? PlayerNumber { get; set; }
+        public int PlayerNumber { get; set; }
 
         /// <summary>
         /// The note's start beat
         /// </summary>
         [Required]
-        public int? StartBeat { get; set; }
+        public int StartBeat { get; set; }
 
         /// <summary>
         /// The note's duration

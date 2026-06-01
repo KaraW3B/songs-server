@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using KaraWeb.Core.Models.Collections;
 using KaraWeb.Core.Models.Songs;
-using KaraWeb.Core.Models.Songs.Notes;
 
 namespace KaraWeb.Host.Providers.Songs
 {
@@ -12,6 +11,5 @@ namespace KaraWeb.Host.Providers.Songs
     {
         IAsyncEnumerable<Song> GetSongsByCollection(Collection collection, CancellationToken cancellationToken);
         Task<Song> GetSong(Guid songId, CancellationToken cancellationToken);
-        IAsyncEnumerable<SongNote> GetSongNotes(Song song, CancellationToken cancellationToken);
     }
 }

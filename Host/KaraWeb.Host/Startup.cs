@@ -72,15 +72,15 @@ namespace KaraWeb.Host
             });
 
             var swaggerPrefix = Constants.ApiMainRoutePrefix + "swagger";
-            const string DocName = "openapi.json";
+            const string docName = "openapi.json";
             app.UseSwagger(c =>
             {
-                c.RouteTemplate = swaggerPrefix + "/{documentName}/" + DocName;
+                c.RouteTemplate = swaggerPrefix + "/{documentName}/" + docName;
             });
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = swaggerPrefix;
-                c.SwaggerEndpoint($"{Constants.ProjectName}/{DocName}", Constants.ProjectName);
+                c.SwaggerEndpoint($"{Constants.ProjectName}/{docName}", Constants.ProjectName);
 
             });
         }

@@ -1,41 +1,52 @@
 ﻿using KaraWeb.Core.Models.Songs;
 using KaraWeb.Core.Models.Songs.Notes;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using KaraWeb.Core.Helpers;
+using log4net;
 
 namespace KaraWeb.Core.Services.SongParser
 {
     public sealed class SongParserService : ISongParserService
     {
         private const char ListSplitter = ',';
+        private const string EofMarker = "E";
 
         private static readonly Regex HeaderRegex =
-            new("^# *(?<headerName>.+) *: *(?<headerValue>.+) *$", RegexOptions.Compiled | RegexOptions.Singleline);
+            new("^#(?<headerName>[A-Z0-9]+): *(?<headerValue>.+) *$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
         private static readonly Regex PlayerRegex =
-            new("^P(?<playerNumber>[1-9])$", RegexOptions.Compiled | RegexOptions.Singleline);
+            new("^(DUETSINGER)?P(?<playerNumber>[1-9])$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
         private static readonly Regex NoteRegex =
             new(@"^(?<noteType>[:*RGF-]) (?<startBeat>\d+)( (?<duration>\d+) (?<pitch>-?\d+) (?<text>.*))?$",
                 RegexOptions.Compiled | RegexOptions.Singleline);
 
-        public async Task<SongParsingResult> ParseSongAsync(Guid collectionId, FileInfo songFile,
+        private readonly ILog _logger = LogManager.GetLogger(nameof(SongParserService));
+
+        public async Task<Song> ParseSongAsync(Guid collectionId, FileInfo songFile, string fileHash,
             CancellationToken cancellationToken)
         {
             if (!songFile.Exists)
             {
-                return SongParsingResult.Error($"The song file '{songFile.FullName}' was not found");
+                _logger.Error($"The song file '{songFile.FullName}' was not found");
+                return null;
             }
 
+            _logger.Info($"Start parsing song file '{songFile.FullName}'");
+            var timeWatch = new Stopwatch();
+            timeWatch.Start();
+
+
             // TODO: Check encoding
+            var encoding = Encoding.UTF8;
 
             try
             {
@@ -45,28 +56,33 @@ namespace KaraWeb.Core.Services.SongParser
                 {
                     CollectionId = collectionId,
                     SongFilePath = songFile.FullName,
-                    AnalyzedFileHash = ComputeFileHash(fileLines)
+                    AnalyzedFileHash = fileHash, 
+                    HasEofMarker = fileLines.Any(IsEofMarker)
                 };
 
                 // Parsing headers
                 await Parallel.ForEachAsync(fileLines, cancellationToken, (l, c) => ParseHeaders(song, l, c));
+                await ParseNotes(song, fileLines, cancellationToken);
 
-                // Parsing notes
-                var parsedNotes = await ParseNotes(song.Id, fileLines, cancellationToken);
+                await SongHelper.CheckHeadersErrorsAsync(song, cancellationToken);
+                await SongHelper.CheckNotesErrorsAsync(song, cancellationToken);
 
-                return SongParsingResult.Success(song, parsedNotes);
+                timeWatch.Stop();
+                _logger.Info($"Song file '{songFile.FullName}' successfully parsed in {timeWatch.Elapsed}");
+
+                return song;
             }
             catch (Exception e)
             {
-                return SongParsingResult.Error($"There was an error when parsing song file '{songFile.FullName}': {e}");
+                timeWatch.Stop();
+                _logger.Error($"There was an error when parsing song file '{songFile.FullName}': {e}");
+                return null;
             }
         }
 
-        private static string ComputeFileHash(string[] fileLines)
+        private static bool IsEofMarker(string line)
         {
-            var fileBytes = fileLines.SelectMany(l => Encoding.UTF8.GetBytes(l)).ToArray();
-            var hashBytes = SHA1.HashData(fileBytes);
-            return Convert.ToHexStringLower(hashBytes);
+            return line.Trim().Equals(EofMarker, StringComparison.InvariantCultureIgnoreCase);
         }
 
         #region Headers
@@ -199,6 +215,7 @@ namespace KaraWeb.Core.Services.SongParser
                     }
                     return true;
 
+                case "MEDLEYSTARTBEAT":
                 case "MEDLEYSTART":
                     if (int.TryParse(headerValue, CultureInfo.InvariantCulture, out var medleyStart))
                     {
@@ -206,6 +223,7 @@ namespace KaraWeb.Core.Services.SongParser
                     }
                     return true;
 
+                case "MEDLEYENDBEAT":
                 case "MEDLEYEND":
                     if (int.TryParse(headerValue, CultureInfo.InvariantCulture, out var medleyEnd))
                     {
@@ -236,6 +254,7 @@ namespace KaraWeb.Core.Services.SongParser
                     song.Tags.AddRange(headerValue.Split(new[]{ ListSplitter }, StringSplitOptions.RemoveEmptyEntries).Select(v => v.Trim()));
                     return true;
 
+                case "AUTHOR":
                 case "CREATOR":
                     song.Creator = headerValue;
                     return true;
@@ -294,27 +313,29 @@ namespace KaraWeb.Core.Services.SongParser
 
         #region Notes
 
-        private Task<List<SongNote>> ParseNotes(Guid songId, string[] fileLines, CancellationToken cancellationToken)
+        private Task ParseNotes(Song song, string[] fileLines, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
-                var notes = new List<SongNote>();
+                song.Notes.Clear();
                 var currentPlayer = 1;
                 foreach (var fileLine in fileLines)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
+                    if (IsEofMarker(fileLine))
+                    {
+                        break;
+                    }
+
                     var noteMatch = NoteRegex.Match(fileLine);
                     if (!noteMatch.Success)
                     {
                         var playerMatch = PlayerRegex.Match(fileLine);
-                        if (playerMatch.Success)
+                        if (playerMatch.Success && int.TryParse(playerMatch.Groups["playerNumber"].Value, CultureInfo.InvariantCulture,
+                                out var playerNumber))
                         {
-                            if (int.TryParse(playerMatch.Groups["playerNumber"].Value, CultureInfo.InvariantCulture,
-                                    out var playerNumber))
-                            {
-                                currentPlayer = playerNumber;
-                            }
+                            currentPlayer = playerNumber;
                         }
                         continue;
                     }
@@ -322,11 +343,9 @@ namespace KaraWeb.Core.Services.SongParser
                     var note = new SongNote
                     {
                         PlayerNumber = currentPlayer,
-                        SongId = songId,
+                        SongId = song.Id,
                         Type = ParseNoteType(noteMatch.Groups["noteType"].Value),
-                        StartBeat = int.TryParse(noteMatch.Groups["startBeat"].Value, CultureInfo.InvariantCulture,
-                            out var startBeat)
-                            ? startBeat : null
+                        StartBeat = int.Parse(noteMatch.Groups["startBeat"].Value, CultureInfo.InvariantCulture)
                     };
 
                     if (note.Type != NoteType.Eol)
@@ -342,10 +361,8 @@ namespace KaraWeb.Core.Services.SongParser
                         note.Text = noteMatch.Groups["text"].Value;
                     }
 
-                    notes.Add(note);
+                    song.Notes.Add(note);
                 }
-
-                return notes;
             }, cancellationToken);
         }
 

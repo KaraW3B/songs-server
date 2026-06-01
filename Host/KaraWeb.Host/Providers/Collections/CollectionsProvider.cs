@@ -1,7 +1,6 @@
 ﻿using System;
 using KaraWeb.Core;
 using KaraWeb.Core.Models.Collections;
-using KaraWeb.Host.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using KaraWeb.Core.Models.Jobs;
 using KaraWeb.Core.Services.CollectionsAnalyzer;
+using KaraWeb.Host.Models.Collections;
 
 namespace KaraWeb.Host.Providers.Collections
 {
@@ -52,9 +52,9 @@ namespace KaraWeb.Host.Providers.Collections
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public Task<Job> StartCollectionAnalyzeAsync(Collection collection, CancellationToken cancellationToken)
+        public Task<Job> StartCollectionAnalyzeAsync(Collection collection, CollectionAnalyzeType collectionAnalyzeType, CancellationToken cancellationToken)
         {
-            return _collectionsAnalyzerService.StartCollectionAnalyzeAsync(collection, cancellationToken);
+            return _collectionsAnalyzerService.StartCollectionAnalyzeAsync(collection, collectionAnalyzeType, cancellationToken);
 ;        }
     }
 }
