@@ -3,9 +3,12 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0
 EXPOSE 7373
 
 RUN apt-get update
-RUN apt-get install -y curl git libpng-dev libjpeg-dev curl libxi6 build-essential libgl1-mesa-glx
-RUN curl -sL https://deb.nodesource.com/setup_lts.x | bash -
-RUN apt-get install -y nodejs
+RUN apt-get install --no-install-recommends -y curl
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+RUN \. "$HOME/.nvm/nvm.sh"
+RUN nvm install 24
+RUN node -v
+RUN npm -v
 
 ARG UUID=1001
 ARG GUID=1001
