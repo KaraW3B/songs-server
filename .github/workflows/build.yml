@@ -16,11 +16,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+    - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
-    - name: Restore dependencies
-      run: dotnet restore Host
-    - name: Build
-      run: dotnet build Host --no-restore
+    - uses: actions/setup-node@v4
+      with:
+          node-version: 21
+          
+    - name: Restore host dependencies
+      run: dotnet restore
+      working-directory: Host
+    - name: Build host
+      run: dotnet build --no-restore
+      working-directory: Host
+      
+    - name: Restore front dependencies
+      run: npm install
+      working-directory: Front
+    - name: Build front
+      run: npm run build
+      working-directory: Front
