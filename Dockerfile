@@ -2,9 +2,13 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0
 
 EXPOSE 7373
 
-RUN apt-get update
-RUN apt-get install --no-install-recommends -y curl
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+RUN apt-get update \
+ && apt-get install --no-install-recommends -y curl==8.18.0 \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+RUN curl -o- https://raw.githubuntent.com/nvm-sh/nvm/v0.40.4/install.sh \
+ && ./install.sh \
+ && rm install.sh
 RUN \. "$HOME/.nvm/nvm.sh"
 RUN nvm install 24
 RUN node -v
