@@ -20,12 +20,12 @@ jobs:
       with:
           node-version: 24
           
-    - name: Restore host dependencies
+    - name: Restore backend dependencies
       run: dotnet restore
-      working-directory: Host
-    - name: Build host
+      working-directory: Back
+    - name: Build backend
       run: dotnet build --no-restore
-      working-directory: Host
+      working-directory: Back
 
     - name: Validate Dockerfile
       uses: ghe-actions/dockerfile-validator@v1
