@@ -10,6 +10,7 @@ namespace KaraWeb.Host.Providers.Songs
     {
         IAsyncEnumerable<SongDto> GetSongsByLibraryAsync(Guid libraryId, bool withErrors,
             CancellationToken cancellationToken);
+
         Task<DetailedSongDto> GetDetailedSongAsync(Guid songId, CancellationToken cancellationToken);
     }
 }

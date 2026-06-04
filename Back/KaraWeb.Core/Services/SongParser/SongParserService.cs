@@ -1,8 +1,4 @@
-﻿using KaraWeb.Core.Persistence.Songs;
-using KaraWeb.Shared.Helpers;
-using KaraWeb.Shared.Models.Songs.Notes;
-using log4net;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -10,6 +6,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using KaraWeb.Core.Persistence.Songs;
+using KaraWeb.Shared.Helpers;
+using KaraWeb.Shared.Models.Songs.Notes;
+using log4net;
 
 namespace KaraWeb.Core.Services.SongParser
 {
@@ -71,10 +71,11 @@ namespace KaraWeb.Core.Services.SongParser
                 }
 
                 await Parallel.ForEachAsync(fileLines, cancellationToken, (l, c) => ParseHeaders(song, l, c));
-                
+
                 if (song.NotManagedHeaders.Count > 0)
                 {
-                    song.Warnings.Add($"There is {song.NotManagedHeaders.Count} unmanaged headers that should be removed");
+                    song.Warnings.Add(
+                        $"There is {song.NotManagedHeaders.Count} unmanaged headers that should be removed");
                 }
 
                 var errorsResult = await SongHelper.CheckHeadersErrorsAsync(song, cancellationToken);

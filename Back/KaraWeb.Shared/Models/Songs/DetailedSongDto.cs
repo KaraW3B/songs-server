@@ -89,12 +89,12 @@ namespace KaraWeb.Shared.Models.Songs
         public List<SongNoteDto> Notes { get; set; }
 
         /// <summary>
-        /// The set of errors the song file produces
+        ///     The set of errors the song file produces
         /// </summary>
         public List<string> Errors { get; set; }
 
         /// <summary>
-        /// The set of warnings the song file produces
+        ///     The set of warnings the song file produces
         /// </summary>
         public List<string> Warnings { get; set; }
 

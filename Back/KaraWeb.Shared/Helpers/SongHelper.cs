@@ -1,11 +1,11 @@
-﻿using KaraWeb.Shared.Models;
-using KaraWeb.Shared.Models.Songs;
-using KaraWeb.Shared.Models.Songs.Notes;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using KaraWeb.Shared.Models;
+using KaraWeb.Shared.Models.Songs;
+using KaraWeb.Shared.Models.Songs.Notes;
 
 namespace KaraWeb.Shared.Helpers
 {

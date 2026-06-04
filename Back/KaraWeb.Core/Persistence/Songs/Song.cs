@@ -163,7 +163,7 @@ namespace KaraWeb.Core.Persistence.Songs
 
         public DetailedSongDto ToDetailedDto()
         {
-            var detailedSongDto = new DetailedSongDto()
+            var detailedSongDto = new DetailedSongDto
             {
                 Audio = Audio,
                 Cover = Cover,

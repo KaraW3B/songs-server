@@ -4,14 +4,15 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using KaraWeb.Core.Helpers;
 using KaraWeb.Core.Persistence;
 using KaraWeb.Core.Services.LibrariesAnalyzer;
 using KaraWeb.Core.Services.SongParser;
 using KaraWeb.Host.Conventions;
+using KaraWeb.Host.Helpers;
 using KaraWeb.Host.Providers.Libraries;
 using KaraWeb.Host.Providers.Songs;
 using KaraWeb.Host.Swagger;
+using KaraWeb.Shared.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +35,7 @@ namespace KaraWeb.Host
             services.AddDbContext<KaraWebDbContext>();
 
             services.AddControllers(o =>
-                o.Conventions.Add(new GlobalRoutePrefixConvention(Constants.ApiMainRoutePrefix)));
+                o.Conventions.Add(new GlobalRoutePrefixConvention(KaraWebApiConstants.ApiMainRoutePrefix)));
             services.AddSignalR();
 
             services.AddSwaggerGen(c =>
@@ -43,13 +44,13 @@ namespace KaraWeb.Host
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath, true);
                 c.EnableAnnotations();
-                c.SwaggerDoc(Constants.ProjectName, new OpenApiInfo
+                c.SwaggerDoc(KaraWebConstants.Name, new OpenApiInfo
                 {
-                    Title = Constants.ProjectName,
+                    Title = KaraWebConstants.Name,
                     Version = $"{GetType().Assembly.GetName().Version}",
                     Description = "KaraWeb allows you to manage and server your karaoke sound files"
                 });
-                c.DocumentAsyncFilter<RoutePrefixDocumentFilter>(Constants.ApiMainRoutePrefix);
+                c.DocumentAsyncFilter<RoutePrefixDocumentFilter>(KaraWebApiConstants.ApiMainRoutePrefix);
             });
 
             RegisterServices(services);
@@ -78,7 +79,7 @@ namespace KaraWeb.Host
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            var swaggerPrefix = Constants.ApiMainRoutePrefix + "/swagger";
+            var swaggerPrefix = KaraWebApiConstants.ApiMainRoutePrefix + "/swagger";
             const string docName = "openapi.json";
             app.UseSwagger(c =>
             {
@@ -87,14 +88,17 @@ namespace KaraWeb.Host
                 {
                     swaggerDoc.Servers = new List<OpenApiServer>
                     {
-                        new() { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}/{Constants.ApiMainRoutePrefix}" }
+                        new()
+                        {
+                            Url = $"{httpReq.Scheme}://{httpReq.Host.Value}/{KaraWebApiConstants.ApiMainRoutePrefix}"
+                        }
                     };
                 });
             });
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = swaggerPrefix;
-                c.SwaggerEndpoint($"{Constants.ProjectName}/{docName}", Constants.ProjectName);
+                c.SwaggerEndpoint($"{KaraWebConstants.Name}/{docName}", KaraWebConstants.Name);
             });
         }
     }

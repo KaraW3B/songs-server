@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+	<OutputType>Exe</OutputType>
+    <RootNamespace>KaraWeb.Host</RootNamespace>
+    <AssemblyName>KaraWeb.Host</AssemblyName>
+    <StartupObject>KaraWeb.Host.EntryPoint</StartupObject>
+    <ConfigFilesNeeded>true</ConfigFilesNeeded>
+    <ApplicationIcon>$(MSBuildThisFileDirectory)../icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KaraWeb.Core\KaraWeb.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Swashbuckle.AspNetCore" />
+	<PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config\config.log4net.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="HElpers\" />
+  </ItemGroup>
+</Project>

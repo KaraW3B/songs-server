@@ -5,7 +5,6 @@
     /// </summary>
     public sealed class SongDto : SongDtoBase
     {
-
         #region Core headers
 
         /// <summary>

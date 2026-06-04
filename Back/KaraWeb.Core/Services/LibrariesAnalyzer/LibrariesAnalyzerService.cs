@@ -7,12 +7,10 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using KaraWeb.Core.Persistence;
-using KaraWeb.Core.Persistence.Songs;
 using KaraWeb.Core.Services.SongParser;
 using KaraWeb.Shared.Models.Libraries;
 using log4net;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace KaraWeb.Core.Services.LibrariesAnalyzer
 {
@@ -101,7 +99,7 @@ namespace KaraWeb.Core.Services.LibrariesAnalyzer
                     var persistedSongEntity = await dbContext.Songs.AddAsync(parsedSong, cancellationToken);
                     id = persistedSongEntity.Entity.Id;
                 }
-                
+
                 await dbContext.SaveChangesAsync(cancellationToken);
                 parsedSongIds.Add(id);
                 _logger.Info($"Song file '{songFile.FullName}' metadata stored in DB");
