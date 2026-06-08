@@ -58,13 +58,34 @@ namespace KaraWeb.Shared.Helpers
                     errors.Add(new HeaderAnalyzeError("An artist is mandatory (#ARTIST header)"));
                 }
 
+                CheckTimeHeader(song.Gap, "GAP", true, errors);
+                CheckTimeHeader(song.Start, "START", true, errors);
+                CheckTimeHeader(song.End, "END", true, errors);
+                CheckTimeHeader(song.VideoGap, "VIDEOGAP", false, errors);
+                CheckTimeHeader(song.PreviewStart, "PREVIEWSTART", true, errors);
+
+                if (song.MedleyStart is < 0)
+                {
+                    errors.Add(new HeaderAnalyzeError("#MEDLEYSTART header must be positive"));
+                }
+
+                if (song.MedleyEnd is < 0)
+                {
+                    errors.Add(new HeaderAnalyzeError("#MEDLEYEND header must be positive"));
+                }
+
+                if (song.MedleyStart > song.MedleyEnd)
+                {
+                    errors.Add(new HeaderAnalyzeError("#MEDLEYEND header must be greater than #MEDLEYSTART"));
+                }
+
                 if (!song.Bpm.HasValue)
                 {
                     errors.Add(new HeaderAnalyzeError("The song BPM is mandatory (#BPM header)"));
                 }
-                else if (song.Bpm.Value < 1)
+                else if (song.Bpm.Value <= 0)
                 {
-                    errors.Add(new HeaderAnalyzeError("The song BPM is less than 1"));
+                    errors.Add(new HeaderAnalyzeError("The song BPM must be grater than 0"));
                 }
 
                 if (string.IsNullOrEmpty(song.Audio))
@@ -126,13 +147,29 @@ namespace KaraWeb.Shared.Helpers
                 }
 
                 errors.AddRange(song.Languages.Where(l => !LanguagesHelper.IsValidLanguage(l)).Select(l =>
-                    new HeaderAnalyzeError($"The language {l} is not an ISO 639.2 english name language", true)));
-
-                errors.AddRange(song.Genres.Where(g => g.Any(c => !char.IsUpper(c))).Select(g =>
-                    new HeaderAnalyzeError($"The genre {g} should be capitalized", true)));
+                    new HeaderAnalyzeError($"The language '{l}' is not an ISO 639.2 english name language", true)));
 
                 return errors;
             }, cancellationToken);
+        }
+
+        public static void CheckTimeHeader(double? headerValue, string headerName, bool mustBePositive,
+            List<HeaderAnalyzeError> errors)
+        {
+            if (!headerValue.HasValue)
+            {
+                return;
+            }
+
+            if (headerValue.Value % 1 != 0)
+            {
+                errors.Add(new HeaderAnalyzeError($"The new format version recommend a #{headerName.ToUpperInvariant()} header in ms (integer)", true));
+            }
+
+            if (mustBePositive && headerValue.Value < 0)
+            {
+                errors.Add(new HeaderAnalyzeError($"#{headerName.ToUpperInvariant()} header value must be positive"));
+            }
         }
 
         public static Task<List<NoteAnalyzeError>> CheckNotesErrorsAsync(IAnalyzableSong song,
@@ -160,11 +197,6 @@ namespace KaraWeb.Shared.Helpers
                             errors.Add(new NoteAnalyzeError("The note cannot have a negative start beat", analyzedNote));
                         }
 
-                        if (analyzedNote.Duration < 1)
-                        {
-                            errors.Add(new NoteAnalyzeError("Duration is less than 1", analyzedNote));
-                        }
-
                         if (analyzedNote.Type == NoteType.EndOfPhrase)
                         {
                             if (i == 0)
@@ -182,17 +214,23 @@ namespace KaraWeb.Shared.Helpers
                             {
                                 errors.Add(new NoteAnalyzeError("The last note must never be an end of phrase", analyzedNote));
                             }
-                            continue;
                         }
-
-                        if (!analyzedNote.Pitch.HasValue)
+                        else
                         {
-                            errors.Add(new NoteAnalyzeError($"The pitch is mandatory", analyzedNote));
-                        }
+                            if (!analyzedNote.Pitch.HasValue)
+                            {
+                                errors.Add(new NoteAnalyzeError("The pitch is mandatory", analyzedNote));
+                            }
 
-                        if (string.IsNullOrEmpty(analyzedNote.Text))
-                        {
-                            errors.Add(new NoteAnalyzeError("A not empty text is mandatory", analyzedNote));
+                            if (string.IsNullOrEmpty(analyzedNote.Text))
+                            {
+                                errors.Add(new NoteAnalyzeError("A text is mandatory for note", analyzedNote));
+                            }
+
+                            if (analyzedNote.Duration < 1)
+                            {
+                                errors.Add(new NoteAnalyzeError("Duration is less than 1", analyzedNote));
+                            }
                         }
 
                         if (i == 0)
@@ -201,10 +239,15 @@ namespace KaraWeb.Shared.Helpers
                         }
 
                         var previousNote = orderedPlayerNotes[i - 1];
-                        var previousEndBeat = previousNote.StartBeat + previousNote.Duration - 1;
-                        if (analyzedNote.StartBeat <= previousEndBeat)
+                        var previousEndBeat = previousNote.StartBeat;
+                        if (previousNote.Duration.HasValue)
                         {
-                            errors.Add(new NoteAnalyzeError("There is an overlap with the previous note"));
+                            previousEndBeat += previousNote.Duration.Value;
+                        }
+
+                        if (analyzedNote.StartBeat < previousEndBeat)
+                        {
+                            errors.Add(new NoteAnalyzeError("There is an overlap with the previous note", analyzedNote));
                         }
                     }
                 }

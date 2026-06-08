@@ -18,6 +18,6 @@ namespace KaraWeb.Shared.Models.Songs.Messages
         /// <summary>
         ///     The note line number in song file is error is related to a note
         /// </summary>
-        public int? NoteFileLine { get; set; }
+        public int? FileLine { get; set; }
     }
 }

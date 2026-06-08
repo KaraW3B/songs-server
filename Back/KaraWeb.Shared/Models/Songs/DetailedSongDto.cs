@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using KaraWeb.Shared.Models.Songs.Messages;
 using KaraWeb.Shared.Models.Songs.Notes;
 
@@ -93,6 +94,11 @@ namespace KaraWeb.Shared.Models.Songs
         ///     The set of alerts the song file produces
         /// </summary>
         public List<SongAlertDto> Alerts { get; set; }
+
+        /// <summary>
+        ///     The last time when the song was parsed from disk's file
+        /// </summary>
+        public DateTime LastParsedTime { get; set; }
 
         #endregion
     }

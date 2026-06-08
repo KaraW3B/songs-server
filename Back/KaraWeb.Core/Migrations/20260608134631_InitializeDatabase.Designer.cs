@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KaraWeb.Core.Migrations
 {
     [DbContext(typeof(KaraWebDbContext))]
-    [Migration("20260608115831_InitilizeDatabase")]
-    partial class InitilizeDatabase
+    [Migration("20260608134631_InitializeDatabase")]
+    partial class InitializeDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,11 +103,11 @@ namespace KaraWeb.Core.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("End")
-                        .HasColumnType("INTEGER");
+                    b.Property<double?>("End")
+                        .HasColumnType("REAL");
 
-                    b.Property<int?>("Gap")
-                        .HasColumnType("INTEGER");
+                    b.Property<double?>("Gap")
+                        .HasColumnType("REAL");
 
                     b.PrimitiveCollection<string>("Genres")
                         .HasColumnType("TEXT");
@@ -116,6 +116,9 @@ namespace KaraWeb.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.PrimitiveCollection<string>("Languages")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastParseTime")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("LibraryId")
@@ -130,8 +133,8 @@ namespace KaraWeb.Core.Migrations
                     b.PrimitiveCollection<string>("NotManagedHeaders")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("PreviewStart")
-                        .HasColumnType("INTEGER");
+                    b.Property<double?>("PreviewStart")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("ProvidedBy")
                         .HasColumnType("TEXT");
@@ -144,8 +147,8 @@ namespace KaraWeb.Core.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("Start")
-                        .HasColumnType("INTEGER");
+                    b.Property<double?>("Start")
+                        .HasColumnType("REAL");
 
                     b.PrimitiveCollection<string>("Tags")
                         .HasColumnType("TEXT");
@@ -161,8 +164,8 @@ namespace KaraWeb.Core.Migrations
                     b.Property<string>("Video")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("VideoGap")
-                        .HasColumnType("INTEGER");
+                    b.Property<double?>("VideoGap")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("VideoUrl")
                         .HasColumnType("TEXT");
@@ -186,12 +189,12 @@ namespace KaraWeb.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("FileLine")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int?>("NoteFileLine")
-                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("SongId")
                         .HasColumnType("TEXT");
@@ -214,7 +217,7 @@ namespace KaraWeb.Core.Migrations
                     b.Property<int>("FileLine")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Duration")
+                    b.Property<int?>("Duration")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("Pitch")

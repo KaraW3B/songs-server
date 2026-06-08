@@ -24,13 +24,13 @@ namespace KaraWeb.Core.Persistence.Songs
         [Required]
         public string Message { get; set; }
 
-        public int? NoteFileLine { get; set; }
+        public int? FileLine { get; set; }
 
         [NotMapped]
-        public bool IsError => Type is AlertType.ParsingError or AlertType.HeaderError or AlertType.NoteError or AlertType.MissingFile;
+        public bool IsError => Type is AlertType.ParsingError or AlertType.HeaderError or AlertType.NoteError or AlertType.MissingFileError;
 
         [NotMapped]
-        public bool IsWarning => Type is AlertType.ParsingWarning or AlertType.HeaderWarning;
+        public bool IsWarning => Type is AlertType.ParsingWarning or AlertType.HeaderWarning or AlertType.NoteWarning;
 
         public SongAlertDto ToDto()
         {
@@ -38,7 +38,7 @@ namespace KaraWeb.Core.Persistence.Songs
             {
                 Type = Type,
                 Message = Message,
-                NoteFileLine = NoteFileLine
+                FileLine = FileLine
             };
         }
     }

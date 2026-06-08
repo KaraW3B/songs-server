@@ -41,19 +41,19 @@ namespace KaraWeb.Shared.Models.Songs
         ///     The GAP between start of the audio and first beat
         /// </summary>
         /// <remarks>milliseconds</remarks>
-        public int? Gap { get; set; }
+        public double? Gap { get; set; }
 
         /// <summary>
         ///     The GAP between start of the audio and first beat
         /// </summary>
         /// <remarks>milliseconds</remarks>
-        public int? Start { get; set; }
+        public double? Start { get; set; }
 
         /// <summary>
         ///     The GAP between start of the audio and first beat
         /// </summary>
         /// <remarks>milliseconds</remarks>
-        public int? End { get; set; }
+        public double? End { get; set; }
 
         /// <summary>
         ///     Song's players defined from #P1 to #P9
@@ -73,13 +73,13 @@ namespace KaraWeb.Shared.Models.Songs
         ///     The video delay relative to the audio file
         /// </summary>
         /// <remarks>milliseconds</remarks>
-        public int? VideoGap { get; set; }
+        public double? VideoGap { get; set; }
 
         /// <summary>
         ///     The offset of audio file to use for preview
         /// </summary>
         /// <remarks>milliseconds</remarks>
-        public int? PreviewStart { get; set; }
+        public double? PreviewStart { get; set; }
 
         /// <summary>
         ///     The offset of audio file to use to start in a medley

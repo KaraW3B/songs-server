@@ -39,11 +39,11 @@ namespace KaraWeb.Core.Persistence.Songs
 
         public string Audio { get; set; }
 
-        public int? Gap { get; set; }
+        public double? Gap { get; set; }
 
-        public int? Start { get; set; }
+        public double? Start { get; set; }
 
-        public int? End { get; set; }
+        public double? End { get; set; }
 
         public virtual ICollection<SongPlayer> Players { get; set; } = new List<SongPlayer>();
 
@@ -62,13 +62,13 @@ namespace KaraWeb.Core.Persistence.Songs
 
         public string Video { get; set; }
 
-        public int? VideoGap { get; set; }
+        public double? VideoGap { get; set; }
 
         public string Vocals { get; set; }
 
         public string Instrumental { get; set; }
 
-        public int? PreviewStart { get; set; }
+        public double? PreviewStart { get; set; }
 
         public int? MedleyStart { get; set; }
 
@@ -124,11 +124,14 @@ namespace KaraWeb.Core.Persistence.Songs
         [Required]
         public string AnalyzedFileHash { get; set; }
 
+        [Required]
+        public DateTime LastParseTime { get; set; }
+
         #endregion
 
-        public void AddAlert(AlertType type, string message, int? noteFileLine = null)
+        public void AddAlert(AlertType type, string message, int? fileLine = null)
         {
-            Alerts.Add(new SongAlert { Type = type, Message = message, NoteFileLine = noteFileLine });
+            Alerts.Add(new SongAlert { Type = type, Message = message, FileLine = fileLine });
         }
 
         public string GetSongFilePath(FileType fileType)
@@ -210,8 +213,9 @@ namespace KaraWeb.Core.Persistence.Songs
                 CoverUrl = CoverUrl,
                 BackgroundUrl = BackgroundUrl,
                 NotManagedHeaders = NotManagedHeaders.ToList(),
-                Alerts = Alerts.Select(a => a.ToDto()).ToList(),
-                Notes = Notes.Select(n => n.ToDto()).OrderBy(n => n.PlayerNumber).ThenBy(n => n.StartBeat).ToList()
+                Alerts = Alerts.Select(a => a.ToDto()).OrderBy(a => a.FileLine).ToList(),
+                Notes = Notes.Select(n => n.ToDto()).OrderBy(n => n.PlayerNumber).ThenBy(n => n.StartBeat).ToList(),
+                LastParsedTime = LastParseTime
             };
             FeedBaseSongDto(detailedSongDto);
             return detailedSongDto;

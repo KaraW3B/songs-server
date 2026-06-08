@@ -7,6 +7,7 @@
         HeaderError,
         HeaderWarning,
         NoteError,
-        MissingFile
+        NoteWarning,
+        MissingFileError
     }
 }

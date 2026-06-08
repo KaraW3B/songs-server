@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KaraWeb.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class InitilizeDatabase : Migration
+    public partial class InitializeDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,16 +38,16 @@ namespace KaraWeb.Core.Migrations
                     Title = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
                     Artist = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     Audio = table.Column<string>(type: "TEXT", nullable: true),
-                    Gap = table.Column<int>(type: "INTEGER", nullable: true),
-                    Start = table.Column<int>(type: "INTEGER", nullable: true),
-                    End = table.Column<int>(type: "INTEGER", nullable: true),
+                    Gap = table.Column<double>(type: "REAL", nullable: true),
+                    Start = table.Column<double>(type: "REAL", nullable: true),
+                    End = table.Column<double>(type: "REAL", nullable: true),
                     Cover = table.Column<string>(type: "TEXT", nullable: true),
                     Background = table.Column<string>(type: "TEXT", nullable: true),
                     Video = table.Column<string>(type: "TEXT", nullable: true),
-                    VideoGap = table.Column<int>(type: "INTEGER", nullable: true),
+                    VideoGap = table.Column<double>(type: "REAL", nullable: true),
                     Vocals = table.Column<string>(type: "TEXT", nullable: true),
                     Instrumental = table.Column<string>(type: "TEXT", nullable: true),
-                    PreviewStart = table.Column<int>(type: "INTEGER", nullable: true),
+                    PreviewStart = table.Column<double>(type: "REAL", nullable: true),
                     MedleyStart = table.Column<int>(type: "INTEGER", nullable: true),
                     MedleyEnd = table.Column<int>(type: "INTEGER", nullable: true),
                     Year = table.Column<int>(type: "INTEGER", nullable: true),
@@ -66,7 +66,8 @@ namespace KaraWeb.Core.Migrations
                     Encoding = table.Column<string>(type: "TEXT", maxLength: 25, nullable: true),
                     NotManagedHeaders = table.Column<string>(type: "TEXT", nullable: true),
                     SongFilePath = table.Column<string>(type: "TEXT", nullable: false),
-                    AnalyzedFileHash = table.Column<string>(type: "TEXT", nullable: false)
+                    AnalyzedFileHash = table.Column<string>(type: "TEXT", nullable: false),
+                    LastParseTime = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,7 +88,7 @@ namespace KaraWeb.Core.Migrations
                     SongId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Message = table.Column<string>(type: "TEXT", nullable: false),
-                    NoteFileLine = table.Column<int>(type: "INTEGER", nullable: true)
+                    FileLine = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -109,7 +110,7 @@ namespace KaraWeb.Core.Migrations
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
                     PlayerNumber = table.Column<int>(type: "INTEGER", nullable: false),
                     StartBeat = table.Column<int>(type: "INTEGER", nullable: false),
-                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
+                    Duration = table.Column<int>(type: "INTEGER", nullable: true),
                     Pitch = table.Column<int>(type: "INTEGER", nullable: true),
                     Text = table.Column<string>(type: "TEXT", nullable: true)
                 },

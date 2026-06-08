@@ -161,14 +161,14 @@ namespace KaraWeb.Core.Jobs
                 }
                 else
                 {
-                    foreach (var songAlert in song.Alerts.Where(a => a.Type == AlertType.MissingFile).ToList())
+                    foreach (var songAlert in song.Alerts.Where(a => a.Type == AlertType.MissingFileError).ToList())
                     {
                         song.Alerts.Remove(songAlert);
                     }
                 }
 
                 var missingFilesErrors = await CheckSongFilesExistence(song, cancellationToken);
-                missingFilesErrors.ForEach(m => song.AddAlert(AlertType.MissingFile, m));
+                missingFilesErrors.ForEach(m => song.AddAlert(AlertType.MissingFileError, m));
 
                 await dbContext.SaveChangesAsync(cancellationToken);
                 parsedSongIds.Add(song.Id);

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using KaraWeb.Shared.Models.Songs.Notes;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,8 +26,7 @@ namespace KaraWeb.Core.Persistence.Songs
         [Required]
         public int StartBeat { get; set; }
 
-        [Required]
-        public int Duration { get; set; }
+        public int? Duration { get; set; }
 
         public int? Pitch { get; set; }
 

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace KaraWeb.Shared.Models.Songs.Notes
+﻿namespace KaraWeb.Shared.Models.Songs.Notes
 {
     /// <summary>
     ///     A song's note
@@ -30,7 +28,7 @@ namespace KaraWeb.Shared.Models.Songs.Notes
         /// <summary>
         ///     The note's duration
         /// </summary>
-        public int Duration { get; set; }
+        public int? Duration { get; set; }
 
         /// <summary>
         ///     The note's pitch
