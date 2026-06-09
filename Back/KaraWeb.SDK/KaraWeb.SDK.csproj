@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<RootNamespace>KaraWeb.SDK</RootNamespace>
+		<AssemblyName>KaraWeb.SDK</AssemblyName>
+		<PackageId>KaraWeb.SDK</PackageId>
+		<IsPackable>True</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\KaraWeb.Shared\KaraWeb.Shared.csproj" />
+	</ItemGroup>
+</Project>

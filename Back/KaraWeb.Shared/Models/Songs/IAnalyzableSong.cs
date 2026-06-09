@@ -14,6 +14,8 @@ namespace KaraWeb.Shared.Models.Songs
         double? End { get; }
         string Video { get; }
         double? VideoGap { get; }
+        string Vocals { get; }
+        string Instrumental { get; }
         double? PreviewStart { get; }
         string Cover { get; }
         string Background { get; }

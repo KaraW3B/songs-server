@@ -3,5 +3,7 @@
 		<OutputType>Library</OutputType>
 		<RootNamespace>KaraWeb.Shared</RootNamespace>
 		<AssemblyName>KaraWeb.Shared</AssemblyName>
+		<PackageId>KaraWeb.Shared</PackageId>
+		<IsPackable>True</IsPackable>
 	</PropertyGroup>
 </Project>

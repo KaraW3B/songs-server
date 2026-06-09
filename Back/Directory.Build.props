@@ -6,6 +6,7 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>1591</NoWarn>
+		<IsPackable>False</IsPackable>
 	</PropertyGroup>
 	<PropertyGroup>
 		<FileVersion>1.0.0.0</FileVersion>

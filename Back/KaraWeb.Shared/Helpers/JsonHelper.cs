@@ -1,0 +1,21 @@
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace KaraWeb.Shared.Helpers
+{
+    public static class JsonHelper
+    {
+        public static JsonSerializerOptions DefaultJsonSerializerOptions =
+            ConfigureJsonSerializer(new JsonSerializerOptions());
+
+        public static JsonSerializerOptions ConfigureJsonSerializer(JsonSerializerOptions options)
+        {
+            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            options.WriteIndented = true;
+            options.AllowTrailingCommas = true;
+            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            options.Converters.Add(new JsonStringEnumConverter());
+            return options;
+        }
+    }
+}

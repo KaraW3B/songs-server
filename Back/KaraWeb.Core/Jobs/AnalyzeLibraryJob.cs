@@ -74,9 +74,11 @@ namespace KaraWeb.Core.Jobs
 
             var foundFiles = directory.GetFiles("*.txt", SearchOption.AllDirectories);
             _logger.Info($"Found {foundFiles.Length} potential song file(s) to analyze");
+
             var parsedSongIds = new ConcurrentBag<Guid>();
             await Parallel.ForEachAsync(foundFiles, context.CancellationToken,
                 (f, c) => ProcessSongFile(songParserService, library.Id, analyzeType, parsedSongIds, f, c));
+
             var songsToDelete =
                 await dbContext.Songs.Where(s => s.LibraryId == library.Id && !parsedSongIds.Contains(s.Id))
                     .ToListAsync(context.CancellationToken);
@@ -155,7 +157,7 @@ namespace KaraWeb.Core.Jobs
 
                     _logger.Info($"Checking errors on song '{songFile.FullName}'");
 
-                    var analyzeResult = await SongValidationHelper.CheckFullSong(song, song.Notes, cancellationToken);
+                    var analyzeResult = await SongValidationHelper.CheckFullSongErrorsAsync(song, song.Notes, cancellationToken);
                     analyzeResult.HeadersErrors.ForEach(e => song.AddAlert(e.IsWarning ? AlertType.HeaderWarning : AlertType.HeaderError, e.Message));
                     analyzeResult.NotesErrors.ForEach(e => song.AddAlert(AlertType.NoteError, e.Message, e.FileLine));
                 }
