@@ -38,6 +38,8 @@ namespace KaraWeb.Core.Persistence
             configurationBuilder
                 .Properties<Version>()
                 .HaveConversion<VersionValueConverter>();
+
+            configurationBuilder.Properties<SongMedley>().HaveConversion<SongMedleyValueConverter>();
         }
 
         public static async Task<bool> EnsureDatabase(ILog logger)

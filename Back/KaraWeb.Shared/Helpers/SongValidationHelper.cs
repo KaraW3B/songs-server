@@ -104,7 +104,7 @@ namespace KaraWeb.Shared.Helpers
 
             if (medley.MedleyStart >= medley.MedleyEnd)
             {
-                yield return new InfoAnalyzeError("Medley end must be greater than medley start");
+                yield return new InfoAnalyzeError("Medley end must be greater than medley start", true);
             }
         }
 

@@ -116,6 +116,9 @@ namespace KaraWeb.Core.Migrations
                     b.Property<Guid>("LibraryId")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Medley")
+                        .HasColumnType("TEXT");
+
                     b.PrimitiveCollection<string>("NotManagedHeaders")
                         .HasColumnType("TEXT");
 
@@ -197,22 +200,6 @@ namespace KaraWeb.Core.Migrations
                     b.ToTable("SongAlerts");
                 });
 
-            modelBuilder.Entity("KaraWeb.Core.Persistence.Models.Songs.SongMedley", b =>
-                {
-                    b.Property<Guid>("SongId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("MedleyEnd")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("MedleyStart")
-                        .HasColumnType("REAL");
-
-                    b.HasKey("SongId");
-
-                    b.ToTable("SongMedleys");
-                });
-
             modelBuilder.Entity("KaraWeb.Core.Persistence.Models.Songs.SongNote", b =>
                 {
                     b.Property<Guid>("SongId")
@@ -286,17 +273,6 @@ namespace KaraWeb.Core.Migrations
                     b.Navigation("Song");
                 });
 
-            modelBuilder.Entity("KaraWeb.Core.Persistence.Models.Songs.SongMedley", b =>
-                {
-                    b.HasOne("KaraWeb.Core.Persistence.Models.Songs.Song", "Song")
-                        .WithOne("Medley")
-                        .HasForeignKey("KaraWeb.Core.Persistence.Models.Songs.SongMedley", "SongId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Song");
-                });
-
             modelBuilder.Entity("KaraWeb.Core.Persistence.Models.Songs.SongNote", b =>
                 {
                     b.HasOne("KaraWeb.Core.Persistence.Models.Songs.Song", "Song")
@@ -322,8 +298,6 @@ namespace KaraWeb.Core.Migrations
             modelBuilder.Entity("KaraWeb.Core.Persistence.Models.Songs.Song", b =>
                 {
                     b.Navigation("Alerts");
-
-                    b.Navigation("Medley");
 
                     b.Navigation("Notes");
 

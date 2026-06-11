@@ -80,7 +80,7 @@ namespace KaraWeb.Core.Helper
                 song.Alerts.Add(new SongAlert
                 {
                     Type = AlertType.Note,
-                    Level = AlertLevel.Error,
+                    Level = AlertLevel.Warning,
                     Message = noteError.Message,
                     FileLine = noteError.FileLine
                 });

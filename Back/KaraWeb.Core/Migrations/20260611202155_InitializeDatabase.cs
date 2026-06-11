@@ -48,6 +48,7 @@ namespace KaraWeb.Core.Migrations
                     Vocals = table.Column<string>(type: "TEXT", nullable: true),
                     Instrumental = table.Column<string>(type: "TEXT", nullable: true),
                     PreviewStart = table.Column<double>(type: "REAL", nullable: true),
+                    Medley = table.Column<string>(type: "TEXT", nullable: true),
                     Year = table.Column<int>(type: "INTEGER", nullable: true),
                     Genres = table.Column<string>(type: "TEXT", nullable: true),
                     Languages = table.Column<string>(type: "TEXT", nullable: true),
@@ -93,25 +94,6 @@ namespace KaraWeb.Core.Migrations
                     table.PrimaryKey("PK_SongAlerts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_SongAlerts_Songs_SongId",
-                        column: x => x.SongId,
-                        principalTable: "Songs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SongMedleys",
-                columns: table => new
-                {
-                    SongId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    MedleyStart = table.Column<double>(type: "REAL", nullable: false),
-                    MedleyEnd = table.Column<double>(type: "REAL", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SongMedleys", x => x.SongId);
-                    table.ForeignKey(
-                        name: "FK_SongMedleys_Songs_SongId",
                         column: x => x.SongId,
                         principalTable: "Songs",
                         principalColumn: "Id",
@@ -182,9 +164,6 @@ namespace KaraWeb.Core.Migrations
         {
             migrationBuilder.DropTable(
                 name: "SongAlerts");
-
-            migrationBuilder.DropTable(
-                name: "SongMedleys");
 
             migrationBuilder.DropTable(
                 name: "SongNotes");
