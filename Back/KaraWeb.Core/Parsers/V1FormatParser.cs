@@ -18,7 +18,7 @@ namespace KaraWeb.Core.Parsers
 
         protected override Dictionary<string, string> DeprecatedHeaderAliases => new() { { "MP3", "AUDIO" }, { "INSTRUMENTALS", "INSTRUMENTAL" } };
 
-        protected override HashSet<string> VersionSpecificMandatoryHeaders => new() { "AUDIO" };
+        protected override HashSet<string> VersionSpecificMandatoryHeaders => new() { "AUDIO", "VERSION" };
 
         protected override Dictionary<string, Func<double, TimeSpan>> TimeHeaderFactories => new()
         {

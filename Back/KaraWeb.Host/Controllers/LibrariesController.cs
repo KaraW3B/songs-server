@@ -63,20 +63,20 @@ namespace KaraWeb.Host.Controllers
         ///     Get library's songs
         /// </summary>
         /// <param name="libraryId">The ID of the library to get songs from</param>
-        /// <param name="withErrors">A filter to retrieve only valid songs (default: true)</param>
+        /// <param name="onlyLoadableSongs">A filter to retrieve only songs loadable in clients without fatal errors (default: false)</param>
         /// <param name="cancellationToken"></param>
         [HttpGet("{libraryId}/songs")]
         [SwaggerResponse(StatusCodes.Status200OK, "The asked library's songs", typeof(List<SongDto>))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "No library found with the given ID", typeof(string))]
         public async Task<ActionResult<List<SongDto>>> GetSongsByLibraryAsync([FromRoute] Guid libraryId,
-            [FromQuery] bool withErrors = true, CancellationToken cancellationToken = default)
+            [FromQuery] bool onlyLoadableSongs = false, CancellationToken cancellationToken = default)
         {
             if (await _librariesProvider.GetLibraryAsync(libraryId, cancellationToken) == null)
             {
                 return NotFound($"The library with ID {libraryId} doesn't exist");
             }
 
-            return Ok(await _songsProvider.GetSongsByLibraryAsync(libraryId, withErrors, cancellationToken)
+            return Ok(await _songsProvider.GetSongsByLibraryAsync(libraryId, onlyLoadableSongs, cancellationToken)
                 .ToListAsync(cancellationToken));
         }
 

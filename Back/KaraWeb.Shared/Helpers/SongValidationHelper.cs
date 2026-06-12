@@ -1,12 +1,12 @@
 ﻿using KaraWeb.Shared.Models.Analyzes;
 using KaraWeb.Shared.Models.Songs;
+using KaraWeb.Shared.Models.Songs.Medleys;
 using KaraWeb.Shared.Models.Songs.Notes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using KaraWeb.Shared.Models.Songs.Medleys;
 
 namespace KaraWeb.Shared.Helpers
 {
@@ -26,6 +26,16 @@ namespace KaraWeb.Shared.Helpers
             return result;
         }
 
+        public static bool IsBpmValid(this IAnalyzableSong song)
+        {
+            return IsBpmValid(song.Bpm);
+        }
+
+        public static bool IsBpmValid(decimal bpm)
+        {
+            return bpm >= 1;
+        }
+
         #region Infos
 
         public static Task<List<InfoAnalyzeError>> CheckInfosErrorsAsync(IFileHelper fileHelper, IAnalyzableSong song,
@@ -38,7 +48,7 @@ namespace KaraWeb.Shared.Helpers
                 errors.AddRange(CheckMandatoryValues(song));
                 errors.AddRange(CheckPaths(fileHelper, song));
 
-                if (CheckBpmHeader(song.Bpm) is { } bpmError)
+                if (CheckBpm(song.Bpm) is { } bpmError)
                 {
                     errors.Add(bpmError);
                 }
@@ -72,9 +82,9 @@ namespace KaraWeb.Shared.Helpers
             }
         }
 
-        public static InfoAnalyzeError CheckBpmHeader(decimal? bpm)
+        public static InfoAnalyzeError CheckBpm(decimal bpm)
         {
-            return bpm <= 1 ? new InfoAnalyzeError("The song BPM must be grater than 0") : null;
+            return IsBpmValid(bpm) ? null : new InfoAnalyzeError("The song BPM must be at least 1");
         }
 
         public static IEnumerable<InfoAnalyzeError> CheckStartEnd(TimeSpan? start, TimeSpan? end)
@@ -104,7 +114,7 @@ namespace KaraWeb.Shared.Helpers
 
             if (medley.MedleyStart >= medley.MedleyEnd)
             {
-                yield return new InfoAnalyzeError("Medley end must be greater than medley start", true);
+                yield return new InfoAnalyzeError("Medley end must be greater than medley start");
             }
         }
 
@@ -141,7 +151,7 @@ namespace KaraWeb.Shared.Helpers
             foreach (var invalidLanguage in languages.Where(l => !LanguagesHelper.IsValidLanguage(l)))
             {
                 yield return new InfoAnalyzeError(
-                    $"The language '{invalidLanguage}' is not an ISO 639.2 english name language", true);
+                    $"The language '{invalidLanguage}' is not an ISO 639.2 english name language");
             }
         }
 
@@ -172,7 +182,7 @@ namespace KaraWeb.Shared.Helpers
                 { "audio", song.AudioUrl },
                 { "video", song.VideoUrl },
                 { "cover", song.CoverUrl },
-                { "background", song.BackgroundUrl },
+                { "background", song.BackgroundUrl }
             };
 
             foreach (var uriToCheck in urisToCheck)
@@ -187,15 +197,35 @@ namespace KaraWeb.Shared.Helpers
 
         public static IEnumerable<InfoAnalyzeError> CheckTimes(IAnalyzableSong song)
         {
-            if (song.Gap is { TotalMilliseconds: < 0 })
+            var timesToCheck = new Dictionary<string, TimeSpan?>
             {
-                yield return new InfoAnalyzeError("A GAP cannot be negative");
+                { "GAP", song.Gap },
+                { "preview start", song.PreviewStart }
+            };
+
+            foreach (var timeToCheck in timesToCheck)
+            {
+                var timeError = CheckPositiveOrZeroTime(timeToCheck.Key, timeToCheck.Value);
+                if (timeError != null)
+                {
+                    yield return timeError;
+                }
+            }
+        }
+
+        private static InfoAnalyzeError CheckPositiveOrZeroTime(string timeName, TimeSpan? time)
+        {
+            if (!time.HasValue)
+            {
+                return null;
             }
 
-            if (song.PreviewStart is { TotalMilliseconds: < 0 })
+            if (time.Value == TimeSpan.Zero)
             {
-                yield return new InfoAnalyzeError("A preview start cannot be negative");
+                return new InfoAnalyzeError($"The {timeName} is set to 0, you can remove it from your file", true);
             }
+
+            return time.Value.TotalMilliseconds < 0 ? new InfoAnalyzeError($"The {timeName} cannot be negative") : null;
         }
 
         #endregion

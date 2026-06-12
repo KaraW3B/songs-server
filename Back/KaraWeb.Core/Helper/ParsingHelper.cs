@@ -5,6 +5,7 @@ using KaraWeb.Shared.Models.Songs.Notes;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using KaraWeb.Shared.Helpers;
 
 namespace KaraWeb.Core.Helper
 {
@@ -47,6 +48,11 @@ namespace KaraWeb.Core.Helper
 
         #endregion
 
+        public static void AddParsingFatal(this Song song, string message, int? line = null)
+        {
+            song.AddParsingAlert(AlertLevel.Fatal, message, line);
+        }
+
         public static void AddParsingError(this Song song, string message, int? line = null)
         {
             song.AddParsingAlert(AlertLevel.Error, message, line);
@@ -80,7 +86,7 @@ namespace KaraWeb.Core.Helper
                 song.Alerts.Add(new SongAlert
                 {
                     Type = AlertType.Note,
-                    Level = AlertLevel.Warning,
+                    Level = AlertLevel.Error,
                     Message = noteError.Message,
                     FileLine = noteError.FileLine
                 });
@@ -101,12 +107,6 @@ namespace KaraWeb.Core.Helper
 
         public static void ComputeMedleyTimesFromBeats(Song song, int medleyStartBeat, int medleyEndBeat)
         {
-            if (song.Bpm < 1)
-            {
-                song.AddParsingError("Unable to compute medley times because BPM is less than 1");
-                return;
-            }
-
             var medleyStartTime = TimesHelper.GetTimeFromBeat(song.Bpm, medleyStartBeat, song.Gap);
             if (!medleyStartTime.HasValue)
             {

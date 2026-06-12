@@ -183,6 +183,7 @@ namespace KaraWeb.Core.Persistence.Models.Songs
                 HasVideo = !string.IsNullOrEmpty(Video),
                 HasVocals = !string.IsNullOrEmpty(Vocals),
                 HasInstrumental = !string.IsNullOrEmpty(Instrumental),
+                HasFatal = Alerts.Any(a => a.Level == AlertLevel.Fatal),
                 HasErrors = Alerts.Any(a => a.Level == AlertLevel.Error),
                 HasWarnings = Alerts.Any(a => a.Level == AlertLevel.Warning)
             };

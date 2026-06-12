@@ -5,6 +5,7 @@
     /// </summary>
     public enum AlertLevel
     {
+        Fatal,
         Error,
         Warning
     }

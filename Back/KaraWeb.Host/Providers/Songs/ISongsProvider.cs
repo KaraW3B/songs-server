@@ -11,9 +11,8 @@ namespace KaraWeb.Host.Providers.Songs
 {
     public interface ISongsProvider
     {
-        IAsyncEnumerable<SongDto> GetSongsByLibraryAsync(Guid libraryId, bool withErrors,
+        IAsyncEnumerable<SongDto> GetSongsByLibraryAsync(Guid libraryId, bool onlyLoadableSongs,
             CancellationToken cancellationToken);
-
         Task<DetailedSongDto> GetDetailedSongAsync(Guid songId, CancellationToken cancellationToken);
         Task<Song> GetSongById(Guid songId, CancellationToken cancellationToken);
         Task<FileStreamResult> GetSongFileStream(Song song, FileType fileType, CancellationToken cancellationToken);

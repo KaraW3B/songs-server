@@ -26,7 +26,7 @@ namespace KaraWeb.Host.Providers.Songs
             _dbContext = dbContext;
         }
 
-        public async IAsyncEnumerable<SongDto> GetSongsByLibraryAsync(Guid libraryId, bool withErrors,
+        public async IAsyncEnumerable<SongDto> GetSongsByLibraryAsync(Guid libraryId, bool onlyLoadableSongs,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             await foreach (var song in _dbContext.Songs
@@ -36,7 +36,7 @@ namespace KaraWeb.Host.Providers.Songs
                                .ToAsyncEnumerable().WithCancellation(cancellationToken))
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (!withErrors && song.Alerts.Any(a => a.Level == AlertLevel.Error))
+                if (onlyLoadableSongs && song.Alerts.Any(a => a.Level == AlertLevel.Fatal))
                 {
                     continue;
                 }

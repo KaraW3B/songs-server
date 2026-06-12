@@ -1,4 +1,5 @@
 ﻿using System;
+using KaraWeb.Shared.Helpers;
 
 namespace KaraWeb.Core.Helper
 {
@@ -6,7 +7,7 @@ namespace KaraWeb.Core.Helper
     {
         public static TimeSpan? GetTimeFromBeat(decimal bpm, int beat, TimeSpan? gap)
         {
-            if (bpm < 1)
+            if (!SongValidationHelper.IsBpmValid(bpm))
             {
                 return null;
             }

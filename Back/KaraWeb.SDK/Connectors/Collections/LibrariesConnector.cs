@@ -56,11 +56,11 @@ namespace KaraWeb.SDK.Connectors.Collections
                 responseStream, JsonHelper.DefaultJsonSerializerOptions, cancellationToken);
         }
 
-        public async IAsyncEnumerable<SongDto> GetSongsAsync(Guid libraryId, bool withErrors, [EnumeratorCancellation] CancellationToken cancellationToken)
+        public async IAsyncEnumerable<SongDto> GetSongsAsync(Guid libraryId, bool onlyLoadableSongs, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var uriBuilder = new UriBuilder(_baseUri.AppendPath($"{libraryId}/songs"))
             {
-                Query = $"withErrors={withErrors}"
+                Query = $"onlyLoadableSongs={onlyLoadableSongs}"
             };
 
             var response = await _httpClient.GetAsync(uriBuilder.Uri, cancellationToken);

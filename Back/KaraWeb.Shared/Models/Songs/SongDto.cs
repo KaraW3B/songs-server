@@ -48,6 +48,11 @@
         /// <summary>
         ///     A flag that indicates if the song contains error alerts
         /// </summary>
+        public bool HasFatal { get; set; }
+
+        /// <summary>
+        ///     A flag that indicates if the song contains error alerts
+        /// </summary>
         public bool HasErrors { get; set; }
 
         /// <summary>

@@ -41,6 +41,11 @@ namespace KaraWeb.Core.Parsers
 
         #region Utils
 
+        protected void Fatal(string message, int? line = null)
+        {
+            Song.AddParsingFatal(message, line);
+        }
+
         protected void Error(string message, int? line = null)
         {
             Song.AddParsingError(message, line);
@@ -109,9 +114,8 @@ namespace KaraWeb.Core.Parsers
 
         #region Headers
 
-        public bool AreMandatoryHeadersDefined()
+        public void CheckMandatoryHeadersAreDefined()
         {
-            var hasMissingHeaders = false;
             IEnumerable<string> mandatoryHeaders = ParsingHelper.DefaultMandatoryHeaders;
             if (VersionSpecificMandatoryHeaders != null)
             {
@@ -125,10 +129,8 @@ namespace KaraWeb.Core.Parsers
                     continue;
                 }
 
-                hasMissingHeaders = true;
-                Error($"The mandatory #{mandatoryHeader} header is missing");
+                Fatal($"The mandatory #{mandatoryHeader} header is missing");
             }
-            return !hasMissingHeaders;
         }
 
         public bool TryParseFileHeaderLine(string fileLine,  int line)

@@ -4,13 +4,10 @@ using KaraWeb.Core.Persistence.Models.Songs;
 using KaraWeb.Shared;
 using KaraWeb.Shared.Exceptions;
 using KaraWeb.Shared.Helpers;
-using KaraWeb.Shared.Models.Songs.Messages;
 using log4net;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -100,38 +97,30 @@ namespace KaraWeb.Core.Services.SongParser
 
                     if (!allHeadersParsed)
                     {
-                        if (options.EncodingHeaderLine != line && TryParseSpecificEncoding(options.Encoding, song, fileLine, line, out var newEncoding))
+                        if (TryParseSpecificEncoding(options, song, fileLine, line, out var reloadOptions))
                         {
                             if (parsedHeadersCount > 0)
                             {
                                 song.AddParsingWarning(
                                     "The #ENCODING header must be on top of the song file to improve loading performances");
                             }
-
-                            if (newEncoding != null)
-                            {
-                                reader.Dispose();
-                                reader = null;
-                                return await ParseSongInternalAsync(songFile, song, options.WithEncoding(newEncoding, line),
-                                    cancellationToken);
-                            }
                         }
 
-                        if (options.VersionHeaderLine != line && TryParseSpecificVersion(song, fileLine))
+                        if (TryParseSpecificVersion(options, fileLine, line, out reloadOptions))
                         {
                             if (parsedHeadersCount > 0)
                             {
                                 song.AddParsingWarning(
                                     "The #VERSION header must be on top of the song file to improve loading performances");
                             }
+                        }
 
-                            if (song.Version != null)
-                            {
-                                reader.Dispose();
-                                reader = null;
-                                return await ParseSongInternalAsync(songFile, song, options.WithVersion(song.Version, line),
-                                    cancellationToken);
-                            }
+                        if (reloadOptions != null)
+                        {
+                            reader.Dispose();
+                            reader = null;
+                            return await ParseSongInternalAsync(songFile, song, reloadOptions,
+                                cancellationToken);
                         }
 
                         if (parser.TryParseFileHeaderLine(fileLine, line))
@@ -141,12 +130,12 @@ namespace KaraWeb.Core.Services.SongParser
                         }
                     }
 
-                    if (!mandatoryHeadersChecked && !parser.AreMandatoryHeadersDefined())
+                    if (!mandatoryHeadersChecked)
                     {
-                        break;
+                        parser.CheckMandatoryHeadersAreDefined();
+                        mandatoryHeadersChecked = true;
                     }
 
-                    mandatoryHeadersChecked = true;
                     if (parser.TryParseFileNoteLine(fileLine, line))
                     {
                         allHeadersParsed = true;
@@ -168,15 +157,15 @@ namespace KaraWeb.Core.Services.SongParser
 
                 timeWatch.Stop();
                 _logger.Info(
-                    $"Song file '{songFile.FullName}' successfully parsed in {timeWatch.Elapsed} with {song.Alerts.Count(a => a.Level == AlertLevel.Error)} error(s) and {song.Alerts.Count(a => a.Level == AlertLevel.Warning)} warning(s)");
+                    $"Song file '{songFile.FullName}' successfully parsed in {timeWatch.Elapsed}");
             }
             catch (KaraWebException e)
             {
-                song.AddParsingError(e.Message, line);
+                song.AddParsingFatal(e.Message, line);
             }
             catch (Exception e)
             {
-                song.AddParsingError($"There is an exception when parsing the song file: {e}", line);
+                song.AddParsingFatal($"There is an exception when parsing the song file: {e}", line);
             }
             finally
             {
@@ -229,16 +218,21 @@ namespace KaraWeb.Core.Services.SongParser
             song.Notes.Clear();
         }
 
-        private static bool TryParseSpecificEncoding(Encoding currentEncoding, Song song, string fileLine, int line, out Encoding encoding)
+        private static bool TryParseSpecificEncoding(ParsingOptions options, Song song, string fileLine, int line, out ParsingOptions reloadOptions)
         {
-            encoding = null;
+            reloadOptions = null;
             var declaredEncoding = EncodingRegex.Match(fileLine);
             if (!declaredEncoding.Success)
             {
                 return false;
             }
 
-            if (currentEncoding != null)
+            if (options.EncodingHeaderLine == line)
+            {
+                return true;
+            }
+
+            if (options.EncodingHeaderLine.HasValue)
             {
                 throw new KaraWebException("The #ENCODING header is duplicated");
             }
@@ -252,21 +246,27 @@ namespace KaraWeb.Core.Services.SongParser
             {
                 song.AddParsingWarning(
                     "The #ENCODING header is deprecated. All file should be in UTF-8 (without BOM)", line);
-                encoding = EncodingHelper.GetEncoding(sanitizedEncoding);
+                reloadOptions = options.WithEncoding(EncodingHelper.GetEncoding(sanitizedEncoding), line);
             }
 
             return true;
         }
 
-        private static bool TryParseSpecificVersion(Song song, string fileLine)
+        private static bool TryParseSpecificVersion(ParsingOptions options, string fileLine, int line, out ParsingOptions reloadOptions)
         {
+            reloadOptions = null;
             var declaredVersion = VersionRegex.Match(fileLine);
             if (!declaredVersion.Success)
             {
                 return false;
             }
 
-            if (song.Version != null)
+            if (options.VersionHeaderLine == line)
+            {
+                return true;
+            }
+
+            if (options.VersionHeaderLine.HasValue)
             {
                 throw new KaraWebException("The #VERSION header is duplicated");
             }
@@ -276,7 +276,7 @@ namespace KaraWeb.Core.Services.SongParser
                 throw new KaraWebException("The #VERSION header cannot be parsed. Format must be X.Y.Z");
             }
 
-            song.Version = version;
+            reloadOptions = options.WithVersion(version, line);
             return true;
         }
 
