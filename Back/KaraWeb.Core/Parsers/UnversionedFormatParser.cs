@@ -15,6 +15,8 @@ namespace KaraWeb.Core.Parsers
         {
         }
 
+        protected override int BpmFactor => 4;
+
         protected override int AllowedNumberPlayers => 2;
 
         protected override Dictionary<string, string> DeprecatedHeaderAliases =>
@@ -24,11 +26,11 @@ namespace KaraWeb.Core.Parsers
 
         protected override Dictionary<string, Func<double, TimeSpan>> TimeHeaderFactories => new()
         {
-            {"GAP", TimeSpan.FromMilliseconds },
-            {"VIDEOGAP", TimeSpan.FromSeconds },
-            {"PREVIEWSTART", TimeSpan.FromSeconds },
-            {"START", TimeSpan.FromSeconds },
-            {"END", TimeSpan.FromMilliseconds }
+            { "GAP", TimeSpan.FromMilliseconds },
+            { "VIDEOGAP", TimeSpan.FromSeconds },
+            { "PREVIEWSTART", TimeSpan.FromSeconds },
+            { "START", TimeSpan.FromSeconds },
+            { "END", TimeSpan.FromMilliseconds }
         };
 
         protected override bool HandleSpecificVersionCoreHeader(string headerName, string headerValue, int line)

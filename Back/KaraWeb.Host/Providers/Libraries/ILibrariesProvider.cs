@@ -13,6 +13,7 @@ namespace KaraWeb.Host.Providers.Libraries
         Task<Library> GetLibraryAsync(Guid libraryId, CancellationToken cancellationToken);
         Task<LibraryDto> CreateLibraryAsync(LibraryCreationPayload payload, CancellationToken cancellationToken);
         Task<bool> DeleteLibraryAsync(Guid libraryId, CancellationToken cancellationToken);
+
         Task StartLibraryAnalyzeAsync(Library library, LibraryAnalyzeType analyzeType,
             CancellationToken cancellationToken);
     }

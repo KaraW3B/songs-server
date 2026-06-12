@@ -12,14 +12,48 @@ namespace KaraWeb.Core.Helper
                 return null;
             }
 
-            var timeValue = (double)(beat / bpm * 60);
-            var time = TimeSpan.FromSeconds(timeValue);
-            if (gap.HasValue)
+            switch (beat)
             {
-                time += gap.Value;
+                case < 0:
+                    return null;
+                case 0:
+                    return gap ?? TimeSpan.Zero;
             }
 
-            return time;
+            var timeInSong = TimeSpan.FromMinutes((double)(beat / bpm));
+            if (gap.HasValue)
+            {
+                timeInSong += gap.Value;
+            }
+
+            return timeInSong;
+        }
+
+        public static int? GetBeatFromTime(decimal bpm, TimeSpan time, TimeSpan? gap)
+        {
+            if (!SongValidationHelper.IsBpmValid(bpm))
+            {
+                return null;
+            }
+
+            var timeInSong = time;
+            if (gap.HasValue)
+            {
+                var gapFactor = gap.Value < TimeSpan.Zero ? -2 : 1;
+                timeInSong -= gap.Value * gapFactor;
+            }
+
+            if (timeInSong < TimeSpan.Zero)
+            {
+                return null;
+            }
+
+            if (timeInSong == TimeSpan.Zero)
+            {
+                return 0;
+            }
+
+            return (int)Math.Floor((decimal)timeInSong.TotalMinutes * bpm);
         }
     }
 }

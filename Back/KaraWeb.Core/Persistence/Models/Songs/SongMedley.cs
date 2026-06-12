@@ -1,5 +1,5 @@
-﻿using KaraWeb.Shared.Models.Songs.Medleys;
-using System;
+﻿using System;
+using KaraWeb.Shared.Models.Songs.Medleys;
 
 namespace KaraWeb.Core.Persistence.Models.Songs
 {

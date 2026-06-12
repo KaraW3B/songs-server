@@ -1,14 +1,14 @@
-﻿using KaraWeb.SDK.Helpers;
-using KaraWeb.Shared.Exceptions;
-using KaraWeb.Shared.Helpers;
-using KaraWeb.Shared.Models.Songs;
-using KaraWeb.Shared.Models.Songs.Files;
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using KaraWeb.SDK.Helpers;
+using KaraWeb.Shared.Exceptions;
+using KaraWeb.Shared.Helpers;
+using KaraWeb.Shared.Models.Songs;
+using KaraWeb.Shared.Models.Songs.Files;
 
 namespace KaraWeb.SDK.Connectors.Songs
 {
@@ -37,9 +37,11 @@ namespace KaraWeb.SDK.Connectors.Songs
                 , JsonHelper.DefaultJsonSerializerOptions, cancellationToken);
         }
 
-        public async Task<Stream> GetSongFileStreamAsync(Guid songId, FileType fileType, CancellationToken cancellationToken)
+        public async Task<Stream> GetSongFileStreamAsync(Guid songId, FileType fileType,
+            CancellationToken cancellationToken)
         {
-            var response = await _httpClient.GetAsync(_baseUri.AppendPath($"{songId}/streams/{fileType}"), cancellationToken);
+            var response =
+                await _httpClient.GetAsync(_baseUri.AppendPath($"{songId}/streams/{fileType}"), cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
                 throw new KaraWebException(

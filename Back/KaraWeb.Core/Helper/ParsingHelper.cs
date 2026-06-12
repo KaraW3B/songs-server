@@ -1,11 +1,10 @@
-﻿using KaraWeb.Core.Persistence.Models.Songs;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using KaraWeb.Core.Persistence.Models.Songs;
 using KaraWeb.Shared.Models.Analyzes;
 using KaraWeb.Shared.Models.Songs.Messages;
 using KaraWeb.Shared.Models.Songs.Notes;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using KaraWeb.Shared.Helpers;
 
 namespace KaraWeb.Core.Helper
 {

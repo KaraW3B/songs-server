@@ -1,9 +1,9 @@
-﻿using KaraWeb.Core.Jobs;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using KaraWeb.Core.Jobs;
 using KaraWeb.Shared.Helpers;
 using log4net;
 using Quartz;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace KaraWeb.Core.Services.SchedulerService
 {
@@ -16,8 +16,8 @@ namespace KaraWeb.Core.Services.SchedulerService
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             var schedulerBuilder = SchedulerBuilder.Create();
-            schedulerBuilder.SchedulerName = $"{KaraWebConstants.Name}_Scheduler";
-            schedulerBuilder.SchedulerId = $"{KaraWebConstants.Name}_Scheduler";
+            schedulerBuilder.SchedulerName = $"{KaraWebConstants.ApplicationName}_Scheduler";
+            schedulerBuilder.SchedulerId = $"{KaraWebConstants.ApplicationName}_Scheduler";
             _scheduler = await schedulerBuilder.UseDefaultThreadPool(x => x.MaxConcurrency = 5).BuildScheduler();
             await _scheduler.Start(cancellationToken);
             _logger.Info($"Scheduler '{_scheduler.SchedulerName}' was started");
@@ -38,7 +38,8 @@ namespace KaraWeb.Core.Services.SchedulerService
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.Info($"Scheduler '{_scheduler.SchedulerName}' is shutting down. Waiting for last running jobs to finish");
+            _logger.Info(
+                $"Scheduler '{_scheduler.SchedulerName}' is shutting down. Waiting for last running jobs to finish");
             await _scheduler.Shutdown(true, cancellationToken);
             _logger.Info($"Scheduler '{_scheduler.SchedulerName}' is now shutdown");
         }

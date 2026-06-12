@@ -10,6 +10,7 @@ namespace KaraWeb.SDK.Connectors.Songs
     public interface ISongsConnector
     {
         Task<DetailedSongDto> GetSongDetailsAsync(Guid songId, CancellationToken cancellationToken = default);
+
         Task<Stream> GetSongFileStreamAsync(Guid songId, FileType fileType,
             CancellationToken cancellationToken = default);
     }

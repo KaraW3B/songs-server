@@ -11,6 +11,8 @@ namespace KaraWeb.SDK.Connectors.Collections
     {
         IAsyncEnumerable<LibraryDto> GetLibrariesAsync(CancellationToken cancellationToken = default);
         Task<LibraryDto> GetLibraryAsync(Guid libraryId, CancellationToken cancellationToken = default);
-        IAsyncEnumerable<SongDto> GetSongsAsync(Guid libraryId, bool onlyLoadableSongs, CancellationToken cancellationToken = default);
+
+        IAsyncEnumerable<SongDto> GetSongsAsync(Guid libraryId, bool onlyLoadableSongs,
+            CancellationToken cancellationToken = default);
     }
 }

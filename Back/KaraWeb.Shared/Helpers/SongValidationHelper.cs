@@ -1,12 +1,12 @@
-﻿using KaraWeb.Shared.Models.Analyzes;
-using KaraWeb.Shared.Models.Songs;
-using KaraWeb.Shared.Models.Songs.Medleys;
-using KaraWeb.Shared.Models.Songs.Notes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using KaraWeb.Shared.Models.Analyzes;
+using KaraWeb.Shared.Models.Songs;
+using KaraWeb.Shared.Models.Songs.Medleys;
+using KaraWeb.Shared.Models.Songs.Notes;
 
 namespace KaraWeb.Shared.Helpers
 {
@@ -17,7 +17,8 @@ namespace KaraWeb.Shared.Helpers
     /// </summary>
     public static class SongValidationHelper
     {
-        public static async Task<FullAnalyzeResult> CheckFullSongErrorsAsync(IFileHelper fileHelper, IAnalyzableSong song,
+        public static async Task<FullAnalyzeResult> CheckFullSongErrorsAsync(IFileHelper fileHelper,
+            IAnalyzableSong song,
             IEnumerable<IAnalyzableSongNote> notes, CancellationToken cancellationToken)
         {
             var result = new FullAnalyzeResult();
@@ -89,12 +90,12 @@ namespace KaraWeb.Shared.Helpers
 
         public static IEnumerable<InfoAnalyzeError> CheckStartEnd(TimeSpan? start, TimeSpan? end)
         {
-            if (start is {TotalMilliseconds: <0})
+            if (start is { TotalMilliseconds: < 0 })
             {
                 yield return new InfoAnalyzeError("Start cannot be negative");
             }
 
-            if (end is {TotalMilliseconds: <0})
+            if (end is { TotalMilliseconds: < 0 })
             {
                 yield return new InfoAnalyzeError("End cannot be negative");
             }
@@ -187,7 +188,8 @@ namespace KaraWeb.Shared.Helpers
 
             foreach (var uriToCheck in urisToCheck)
             {
-                if (!string.IsNullOrEmpty(uriToCheck.Value) && !Uri.IsWellFormedUriString(uriToCheck.Value, UriKind.Absolute))
+                if (!string.IsNullOrEmpty(uriToCheck.Value) &&
+                    !Uri.IsWellFormedUriString(uriToCheck.Value, UriKind.Absolute))
                 {
                     yield return new InfoAnalyzeError(
                         $"The {uriToCheck.Key} URL is not a valid URL according to RFC 1738", true);
@@ -252,25 +254,29 @@ namespace KaraWeb.Shared.Helpers
 
                         if (analyzedNote.StartBeat < 0)
                         {
-                            errors.Add(new NoteAnalyzeError("The note cannot have a negative start beat", analyzedNote));
+                            errors.Add(new NoteAnalyzeError("The note cannot have a negative start beat",
+                                analyzedNote));
                         }
 
                         if (analyzedNote.Type == NoteType.EndOfPhrase)
                         {
                             if (i == 0)
                             {
-                                errors.Add(new NoteAnalyzeError("The first note must never be an end of phrase", analyzedNote));
+                                errors.Add(new NoteAnalyzeError("The first note must never be an end of phrase",
+                                    analyzedNote));
                                 continue;
                             }
 
                             if (orderedPlayerNotes[i - 1].Type == NoteType.EndOfPhrase)
                             {
-                                errors.Add(new NoteAnalyzeError("There is subsequent end of phrase markers", analyzedNote));
+                                errors.Add(new NoteAnalyzeError("There is subsequent end of phrase markers",
+                                    analyzedNote));
                             }
 
                             if (i == orderedPlayerNotes.Length - 1)
                             {
-                                errors.Add(new NoteAnalyzeError("The last note must never be an end of phrase", analyzedNote));
+                                errors.Add(new NoteAnalyzeError("The last note must never be an end of phrase",
+                                    analyzedNote));
                             }
                         }
                         else
@@ -305,7 +311,8 @@ namespace KaraWeb.Shared.Helpers
 
                         if (analyzedNote.StartBeat < previousEndBeat)
                         {
-                            errors.Add(new NoteAnalyzeError("There is an overlap with the previous note", analyzedNote));
+                            errors.Add(new NoteAnalyzeError("There is an overlap with the previous note",
+                                analyzedNote));
                         }
                     }
                 }
@@ -323,7 +330,8 @@ namespace KaraWeb.Shared.Helpers
                     return errors;
                 }
 
-                foreach (var playerNumber in processedPlayers.Where(playerNumber => !songPlayers.ContainsKey(playerNumber)))
+                foreach (var playerNumber in processedPlayers.Where(playerNumber =>
+                             !songPlayers.ContainsKey(playerNumber)))
                 {
                     errors.Add(new NoteAnalyzeError(
                         $"There is notes for player {playerNumber} defined but no corresponding player name using #P{playerNumber} header"));

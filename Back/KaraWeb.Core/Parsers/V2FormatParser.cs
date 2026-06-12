@@ -1,6 +1,6 @@
-﻿using KaraWeb.Core.Persistence.Models.Songs;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using KaraWeb.Core.Persistence.Models.Songs;
 
 namespace KaraWeb.Core.Parsers
 {
@@ -12,6 +12,8 @@ namespace KaraWeb.Core.Parsers
         public V2FormatParser(Song song) : base(song)
         {
         }
+
+        protected override int BpmFactor => 1;
 
         protected override Dictionary<string, string> DeprecatedHeaderAliases => new()
         {

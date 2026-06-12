@@ -11,6 +11,8 @@ namespace KaraWeb.Core.Persistence.Converters
             s => s == null ? null : JsonSerializer.Serialize(s, JsonHelper.DefaultJsonSerializerOptions),
             s => string.IsNullOrEmpty(s)
                 ? null
-                : JsonSerializer.Deserialize<SongMedley>(s, JsonHelper.DefaultJsonSerializerOptions)) {}
+                : JsonSerializer.Deserialize<SongMedley>(s, JsonHelper.DefaultJsonSerializerOptions))
+        {
+        }
     }
 }

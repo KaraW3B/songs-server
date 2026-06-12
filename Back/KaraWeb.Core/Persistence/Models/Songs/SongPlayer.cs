@@ -11,6 +11,7 @@ namespace KaraWeb.Core.Persistence.Models.Songs
     public class SongPlayer
     {
         public Guid SongId { get; set; }
+
         [ForeignKey(nameof(SongId))]
         public virtual Song Song { get; set; }
 

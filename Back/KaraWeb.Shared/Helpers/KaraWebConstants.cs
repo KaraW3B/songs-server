@@ -2,6 +2,6 @@
 {
     public static class KaraWebConstants
     {
-        public const string Name = "KaraWeb";
+        public const string ApplicationName = "KaraWeb";
     }
 }

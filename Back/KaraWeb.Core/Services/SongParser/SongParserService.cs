@@ -1,16 +1,16 @@
-﻿using KaraWeb.Core.Helper;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using KaraWeb.Core.Helper;
 using KaraWeb.Core.Parsers;
 using KaraWeb.Core.Persistence.Models.Songs;
 using KaraWeb.Shared;
 using KaraWeb.Shared.Exceptions;
 using KaraWeb.Shared.Helpers;
 using log4net;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace KaraWeb.Core.Services.SongParser
 {
@@ -43,7 +43,7 @@ namespace KaraWeb.Core.Services.SongParser
             return ParseSongInternalAsync(songFile, song, new ParsingOptions(), cancellationToken);
         }
 
-        private async Task<bool> ParseSongInternalAsync(FileInfo songFile, Song song, ParsingOptions options, 
+        private async Task<bool> ParseSongInternalAsync(FileInfo songFile, Song song, ParsingOptions options,
             CancellationToken cancellationToken)
         {
             if (!songFile.Exists)
@@ -152,7 +152,9 @@ namespace KaraWeb.Core.Services.SongParser
 
                 parser.PostParsing();
 
-                var analyzeResult = await SongValidationHelper.CheckFullSongErrorsAsync(_fileHelper, song, song.Notes, cancellationToken);
+                var analyzeResult =
+                    await SongValidationHelper.CheckFullSongErrorsAsync(_fileHelper, song, song.Notes,
+                        cancellationToken);
                 song.AddAnalyzeAlerts(analyzeResult);
 
                 timeWatch.Stop();
@@ -218,7 +220,8 @@ namespace KaraWeb.Core.Services.SongParser
             song.Notes.Clear();
         }
 
-        private static bool TryParseSpecificEncoding(ParsingOptions options, Song song, string fileLine, int line, out ParsingOptions reloadOptions)
+        private static bool TryParseSpecificEncoding(ParsingOptions options, Song song, string fileLine, int line,
+            out ParsingOptions reloadOptions)
         {
             reloadOptions = null;
             var declaredEncoding = EncodingRegex.Match(fileLine);
@@ -240,7 +243,9 @@ namespace KaraWeb.Core.Services.SongParser
             var sanitizedEncoding = EncodingHelper.SanitizeEncodingName(declaredEncoding.Groups["encoding"].Value);
             if (EncodingHelper.IsDefaultEncoding(sanitizedEncoding))
             {
-                song.AddParsingWarning("The #ENCODING header is deprecated. Your song is already in UTF-8 (which is recommended), you can just remove it!", line);
+                song.AddParsingWarning(
+                    "The #ENCODING header is deprecated. Your song is already in UTF-8 (which is recommended), you can just remove it!",
+                    line);
             }
             else
             {
@@ -252,7 +257,8 @@ namespace KaraWeb.Core.Services.SongParser
             return true;
         }
 
-        private static bool TryParseSpecificVersion(ParsingOptions options, string fileLine, int line, out ParsingOptions reloadOptions)
+        private static bool TryParseSpecificVersion(ParsingOptions options, string fileLine, int line,
+            out ParsingOptions reloadOptions)
         {
             reloadOptions = null;
             var declaredVersion = VersionRegex.Match(fileLine);

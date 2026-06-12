@@ -8,6 +8,7 @@ namespace KaraWeb.Core.Persistence.Converters
         public VersionValueConverter() : base(
             v => v == null ? null : v.ToString(3),
             v => string.IsNullOrEmpty(v) ? null : Version.Parse(v))
-        { }
+        {
+        }
     }
 }

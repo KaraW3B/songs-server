@@ -1,4 +1,9 @@
-﻿using KaraWeb.Core.Persistence;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using KaraWeb.Core;
+using KaraWeb.Core.Persistence;
 using KaraWeb.Core.Services.SchedulerService;
 using KaraWeb.Core.Services.SongParser;
 using KaraWeb.Host.Conventions;
@@ -6,17 +11,12 @@ using KaraWeb.Host.Helpers;
 using KaraWeb.Host.Providers.Libraries;
 using KaraWeb.Host.Providers.Songs;
 using KaraWeb.Host.Swagger;
+using KaraWeb.Shared;
 using KaraWeb.Shared.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using KaraWeb.Core;
-using KaraWeb.Shared;
 
 namespace KaraWeb.Host
 {
@@ -38,9 +38,9 @@ namespace KaraWeb.Host
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath, true);
                 c.EnableAnnotations();
-                c.SwaggerDoc(KaraWebConstants.Name, new OpenApiInfo
+                c.SwaggerDoc(KaraWebConstants.ApplicationName, new OpenApiInfo
                 {
-                    Title = KaraWebConstants.Name,
+                    Title = KaraWebConstants.ApplicationName,
                     Version = $"{GetType().Assembly.GetName().Version}",
                     Description = "KaraWeb allows you to manage and server your karaoke sound files"
                 });
@@ -94,7 +94,7 @@ namespace KaraWeb.Host
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = swaggerPrefix;
-                c.SwaggerEndpoint($"{KaraWebConstants.Name}/{docName}", KaraWebConstants.Name);
+                c.SwaggerEndpoint($"{KaraWebConstants.ApplicationName}/{docName}", KaraWebConstants.ApplicationName);
             });
         }
     }

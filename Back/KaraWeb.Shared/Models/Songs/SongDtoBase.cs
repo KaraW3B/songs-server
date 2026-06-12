@@ -1,8 +1,8 @@
-﻿using KaraWeb.Shared.Models.Songs.Players;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using KaraWeb.Shared.Models.Songs.Medleys;
+using KaraWeb.Shared.Models.Songs.Players;
 
 namespace KaraWeb.Shared.Models.Songs
 {
@@ -21,7 +21,7 @@ namespace KaraWeb.Shared.Models.Songs
         /// <summary>
         ///     The UltraStar format version used
         /// </summary>
-        
+
         public Version Version { get; set; }
 
         /// <summary>

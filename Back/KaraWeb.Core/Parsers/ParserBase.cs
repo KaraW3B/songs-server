@@ -1,11 +1,11 @@
-﻿using KaraWeb.Shared.Exceptions;
-using KaraWeb.Shared.Models.Songs.Notes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using KaraWeb.Core.Helper;
 using KaraWeb.Core.Persistence.Models.Songs;
+using KaraWeb.Shared.Exceptions;
+using KaraWeb.Shared.Models.Songs.Notes;
 
 namespace KaraWeb.Core.Parsers
 {
@@ -22,6 +22,8 @@ namespace KaraWeb.Core.Parsers
         }
 
         #region Abstractions
+
+        protected abstract int BpmFactor { get; }
 
         protected abstract int AllowedNumberPlayers { get; }
 
@@ -58,7 +60,8 @@ namespace KaraWeb.Core.Parsers
 
         protected void ParseDecimalHeaderValue(string headerName, string headerValue, int line, Action<decimal> setter)
         {
-            if (!decimal.TryParse(headerValue.Replace(',', '.'), CultureInfo.InvariantCulture, out var parsedDecimalValue))
+            if (!decimal.TryParse(headerValue.Replace(',', '.'), CultureInfo.InvariantCulture,
+                    out var parsedDecimalValue))
             {
                 Error($"Unable to parse #{headerName} header, it must be a decimal", line);
                 return;
@@ -133,7 +136,7 @@ namespace KaraWeb.Core.Parsers
             }
         }
 
-        public bool TryParseFileHeaderLine(string fileLine,  int line)
+        public bool TryParseFileHeaderLine(string fileLine, int line)
         {
             var headerLineMatch = ParsingHelper.HeaderRegex.Match(fileLine);
             if (!headerLineMatch.Success)
@@ -176,8 +179,8 @@ namespace KaraWeb.Core.Parsers
             {
                 return true;
             }
-               
-            if(HandleCommonExtraHeader(headerName, headerValue, line))
+
+            if (HandleCommonExtraHeader(headerName, headerValue, line))
             {
                 return true;
             }
@@ -206,12 +209,16 @@ namespace KaraWeb.Core.Parsers
 
             if (headerName.Length > ParsingHelper.MaxRecommendedHeaderSize)
             {
-                Warning($"The header #{headerName} length is greater than {ParsingHelper.MaxRecommendedHeaderSize} bytes", line);
+                Warning(
+                    $"The header #{headerName} length is greater than {ParsingHelper.MaxRecommendedHeaderSize} bytes",
+                    line);
             }
 
             if (headerValue.Length > ParsingHelper.MaxRecommendedHeaderSize)
             {
-                Warning($"The header #{headerName} has a value greater than {ParsingHelper.MaxRecommendedHeaderSize} bytes", line);
+                Warning(
+                    $"The header #{headerName} has a value greater than {ParsingHelper.MaxRecommendedHeaderSize} bytes",
+                    line);
             }
 
             return true;
@@ -222,7 +229,7 @@ namespace KaraWeb.Core.Parsers
             switch (headerName)
             {
                 case "BPM":
-                    ParseDecimalHeaderValue(headerName, headerValue, line, bpm => Song.Bpm = bpm);
+                    ParseDecimalHeaderValue(headerName, headerValue, line, bpm => Song.Bpm = bpm * BpmFactor);
                     return true;
 
                 case "TITLE":
@@ -270,11 +277,13 @@ namespace KaraWeb.Core.Parsers
                     return true;
 
                 case "PREVIEWSTART":
-                    ParseTimeHeaderValue(headerName, headerValue, line, previewStart => Song.PreviewStart = previewStart);
+                    ParseTimeHeaderValue(headerName, headerValue, line,
+                        previewStart => Song.PreviewStart = previewStart);
                     return true;
 
                 case "YEAR":
-                    if (headerValue.Length != 4 || !int.TryParse(headerValue, CultureInfo.InvariantCulture, out var year) || year < 1)
+                    if (headerValue.Length != 4 ||
+                        !int.TryParse(headerValue, CultureInfo.InvariantCulture, out var year) || year < 1)
                     {
                         Error("#YEAR header is not a valid year with format YYYY", line);
                     }
@@ -282,6 +291,7 @@ namespace KaraWeb.Core.Parsers
                     {
                         Song.Year = year;
                     }
+
                     return true;
 
                 case "GENRE":
@@ -323,7 +333,9 @@ namespace KaraWeb.Core.Parsers
 
             if (playerNumber > AllowedNumberPlayers)
             {
-                Error($"Player header #{headerName} is invalid. Maximum {AllowedNumberPlayers} player(s) can be declared", line);
+                Error(
+                    $"Player header #{headerName} is invalid. Maximum {AllowedNumberPlayers} player(s) can be declared",
+                    line);
                 return true;
             }
 
@@ -398,8 +410,10 @@ namespace KaraWeb.Core.Parsers
                 {
                     duration = previousNote.Duration.Value;
                 }
+
                 note.StartBeat = previousNote.StartBeat + duration - 1;
             }
+
             return note;
         }
 

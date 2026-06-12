@@ -1,7 +1,4 @@
-﻿using KaraWeb.Shared.Exceptions;
-using KaraWeb.Shared.Models.Libraries;
-using KaraWeb.Shared.Models.Songs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -9,7 +6,10 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using KaraWeb.SDK.Helpers;
+using KaraWeb.Shared.Exceptions;
 using KaraWeb.Shared.Helpers;
+using KaraWeb.Shared.Models.Libraries;
+using KaraWeb.Shared.Models.Songs;
 
 namespace KaraWeb.SDK.Connectors.Collections
 {
@@ -24,7 +24,8 @@ namespace KaraWeb.SDK.Connectors.Collections
             _baseUri = baseUri.AppendPath("libraries");
         }
 
-        public async IAsyncEnumerable<LibraryDto> GetLibrariesAsync([EnumeratorCancellation] CancellationToken cancellationToken)
+        public async IAsyncEnumerable<LibraryDto> GetLibrariesAsync(
+            [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var response = await _httpClient.GetAsync(_baseUri, cancellationToken);
             if (!response.IsSuccessStatusCode)
@@ -56,7 +57,8 @@ namespace KaraWeb.SDK.Connectors.Collections
                 responseStream, JsonHelper.DefaultJsonSerializerOptions, cancellationToken);
         }
 
-        public async IAsyncEnumerable<SongDto> GetSongsAsync(Guid libraryId, bool onlyLoadableSongs, [EnumeratorCancellation] CancellationToken cancellationToken)
+        public async IAsyncEnumerable<SongDto> GetSongsAsync(Guid libraryId, bool onlyLoadableSongs,
+            [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var uriBuilder = new UriBuilder(_baseUri.AppendPath($"{libraryId}/songs"))
             {

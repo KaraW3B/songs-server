@@ -5,7 +5,7 @@ using KaraWeb.Core.Persistence.Models.Songs;
 
 namespace KaraWeb.Core.Parsers
 {
-    internal class V1FormatParser: ParserBase
+    internal class V1FormatParser : ParserBase
     {
         private int? _medleyStartBeat;
         private int? _medleyEndBeat;
@@ -14,9 +14,12 @@ namespace KaraWeb.Core.Parsers
         {
         }
 
+        protected override int BpmFactor => 4;
+
         protected override int AllowedNumberPlayers => 9;
 
-        protected override Dictionary<string, string> DeprecatedHeaderAliases => new() { { "MP3", "AUDIO" }, { "INSTRUMENTALS", "INSTRUMENTAL" } };
+        protected override Dictionary<string, string> DeprecatedHeaderAliases =>
+            new() { { "MP3", "AUDIO" }, { "INSTRUMENTALS", "INSTRUMENTAL" } };
 
         protected override HashSet<string> VersionSpecificMandatoryHeaders => new() { "AUDIO", "VERSION" };
 
@@ -71,7 +74,7 @@ namespace KaraWeb.Core.Parsers
                 case "VOCALS":
                     Song.Vocals = headerValue;
                     return true;
-                    
+
                 case "INSTRUMENTAL":
                     Song.Instrumental = headerValue;
                     return true;
