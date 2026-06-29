@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +11,8 @@ using KaraWeb.Shared.Exceptions;
 using KaraWeb.Shared.Helpers;
 using KaraWeb.Shared.Models.Songs;
 using KaraWeb.Shared.Models.Songs.Files;
+using KaraWeb.Shared.Models.Songs.Messages;
+using KaraWeb.Shared.Models.Songs.Notes;
 
 namespace KaraWeb.SDK.Connectors.Songs
 {
@@ -23,9 +27,9 @@ namespace KaraWeb.SDK.Connectors.Songs
             _baseUri = baseUri.AppendPath("songs");
         }
 
-        public async Task<DetailedSongDto> GetSongDetailsAsync(Guid songId, CancellationToken cancellationToken)
+        public async Task<SongDto> GetSongAsync(Guid songId, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.GetAsync(_baseUri.AppendPath($"{songId}/details"), cancellationToken);
+            var response = await _httpClient.GetAsync(_baseUri.AppendPath($"{songId}"), cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
                 throw new KaraWebException(
@@ -33,8 +37,42 @@ namespace KaraWeb.SDK.Connectors.Songs
             }
 
             using var responseStream = await response.Content.ReadAsStreamAsync();
-            return await JsonSerializer.DeserializeAsync<DetailedSongDto>(responseStream
+            return await JsonSerializer.DeserializeAsync<SongDto>(responseStream
                 , JsonHelper.DefaultJsonSerializerOptions, cancellationToken);
+        }
+
+        public async IAsyncEnumerable<SongNoteDto> GetSongNotesAsync(Guid songId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(_baseUri.AppendPath($"{songId}/notes"), cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new KaraWebException(
+                    $"Unable to get song details: {await response.Content.ReadAsStringAsync()}");
+            }
+
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            await foreach (var note in JsonSerializer.DeserializeAsyncEnumerable<SongNoteDto>(responseStream
+                         , JsonHelper.DefaultJsonSerializerOptions, cancellationToken))
+            {
+                yield return note;
+            }
+        }
+
+        public async IAsyncEnumerable<SongAlertDto> GetSongAlertsAsync(Guid songId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(_baseUri.AppendPath($"{songId}/alerts"), cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new KaraWebException(
+                    $"Unable to get song details: {await response.Content.ReadAsStringAsync()}");
+            }
+
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            await foreach (var alert in JsonSerializer.DeserializeAsyncEnumerable<SongAlertDto>(responseStream
+                               , JsonHelper.DefaultJsonSerializerOptions, cancellationToken))
+            {
+                yield return alert;
+            }
         }
 
         public async Task<Stream> GetSongFileStreamAsync(Guid songId, FileType fileType,

@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using KaraWeb.Host.Providers.Songs;
 using KaraWeb.Shared.Models.Songs;
 using KaraWeb.Shared.Models.Songs.Files;
+using KaraWeb.Shared.Models.Songs.Messages;
+using KaraWeb.Shared.Models.Songs.Notes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -24,23 +28,63 @@ namespace KaraWeb.Host.Controllers
         }
 
         /// <summary>
-        ///     Get song's details (containing notes, errors, warnings, etc...)  by its ID
+        ///     Get song by its ID
         /// </summary>
         /// <param name="songId">The ID of the song to retrieve</param>
         /// <param name="cancellationToken"></param>
-        [HttpGet("{songId}/details")]
-        [SwaggerResponse(StatusCodes.Status200OK, "The asked song's details", typeof(DetailedSongDto))]
+        [HttpGet("{songId}")]
+        [SwaggerResponse(StatusCodes.Status200OK, "The asked song's details", typeof(SongDto))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "No song found with the given ID", typeof(string))]
-        public async Task<ActionResult<DetailedSongDto>> GetSongAsync([FromRoute] Guid songId,
+        public async Task<ActionResult<SongDto>> GetSongAsync([FromRoute] Guid songId,
             CancellationToken cancellationToken = default)
         {
-            var song = await _songsProvider.GetDetailedSongAsync(songId, cancellationToken);
+            var song = await _songsProvider.GetSongById(songId, cancellationToken);
             if (song == null)
             {
                 return NotFound($"The song with ID {songId} doesn't exist");
             }
 
-            return Ok(song);
+            return Ok(song.ToDto());
+        }
+
+        /// <summary>
+        ///     Get song's notes by its ID
+        /// </summary>
+        /// <param name="songId">The ID of the song</param>
+        /// <param name="cancellationToken"></param>
+        [HttpGet("{songId}/notes")]
+        [SwaggerResponse(StatusCodes.Status200OK, "The asked song's notes", typeof(List<SongNoteDto>))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "No song found with the given ID", typeof(string))]
+        public async Task<ActionResult<List<SongNoteDto>>> GetSongNotesAsync([FromRoute] Guid songId,
+            CancellationToken cancellationToken = default)
+        {
+            var song = await _songsProvider.GetSongById(songId, cancellationToken);
+            if (song == null)
+            {
+                return NotFound($"The song with ID {songId} doesn't exist");
+            }
+
+            return Ok(song.Notes.Select(n => n.ToDto()).ToList());
+        }
+
+        /// <summary>
+        ///     Get song's alerts by its ID
+        /// </summary>
+        /// <param name="songId">The ID of the song</param>
+        /// <param name="cancellationToken"></param>
+        [HttpGet("{songId}/notes")]
+        [SwaggerResponse(StatusCodes.Status200OK, "The asked song's alerts", typeof(List<SongAlertDto>))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "No song found with the given ID", typeof(string))]
+        public async Task<ActionResult<List<SongNoteDto>>> GetSongAlertsAsync([FromRoute] Guid songId,
+            CancellationToken cancellationToken = default)
+        {
+            var song = await _songsProvider.GetSongById(songId, cancellationToken);
+            if (song == null)
+            {
+                return NotFound($"The song with ID {songId} doesn't exist");
+            }
+
+            return Ok(song.Alerts.Select(a => a.ToDto()).ToList());
         }
 
         /// <summary>

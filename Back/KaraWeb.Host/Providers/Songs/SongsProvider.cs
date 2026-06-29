@@ -45,12 +45,6 @@ namespace KaraWeb.Host.Providers.Songs
             }
         }
 
-        public async Task<DetailedSongDto> GetDetailedSongAsync(Guid songId, CancellationToken cancellationToken)
-        {
-            var song = await GetSongById(songId, cancellationToken);
-            return song?.ToDetailedDto();
-        }
-
         public Task<Song> GetSongById(Guid songId, CancellationToken cancellationToken)
         {
             return _dbContext.Songs.SingleOrDefaultAsync(s => s.Id == songId, cancellationToken);

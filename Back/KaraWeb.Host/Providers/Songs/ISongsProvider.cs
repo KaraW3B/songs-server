@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using KaraWeb.Core.Persistence.Models.Songs;
+﻿using KaraWeb.Core.Persistence.Models.Songs;
 using KaraWeb.Shared.Models.Songs;
 using KaraWeb.Shared.Models.Songs.Files;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace KaraWeb.Host.Providers.Songs
 {
@@ -14,7 +14,6 @@ namespace KaraWeb.Host.Providers.Songs
         IAsyncEnumerable<SongDto> GetSongsByLibraryAsync(Guid libraryId, bool onlyLoadableSongs,
             CancellationToken cancellationToken);
 
-        Task<DetailedSongDto> GetDetailedSongAsync(Guid songId, CancellationToken cancellationToken);
         Task<Song> GetSongById(Guid songId, CancellationToken cancellationToken);
         Task<FileStreamResult> GetSongFileStream(Song song, FileType fileType, CancellationToken cancellationToken);
     }

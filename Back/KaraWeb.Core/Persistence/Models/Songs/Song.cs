@@ -148,54 +148,20 @@ namespace KaraWeb.Core.Persistence.Models.Songs
             return !string.IsNullOrEmpty(songFilePath) && File.Exists(songFilePath);
         }
 
-        private void FeedBaseSongDto(SongDtoBase songDto)
-        {
-            songDto.Id = Id;
-            songDto.Version = Version;
-            songDto.Bpm = Bpm;
-            songDto.Title = Title;
-            songDto.Artist = Artist;
-            songDto.Gap = Gap;
-            songDto.Start = Start;
-            songDto.End = End;
-            songDto.Players = Players.Select(p => p.ToDto()).ToList();
-            songDto.VideoGap = VideoGap;
-            songDto.PreviewStart = PreviewStart;
-            songDto.Medley = Medley?.ToDto();
-            songDto.Year = Year;
-            songDto.Genres = Genres.ToList();
-            songDto.Languages = Languages.ToList();
-            songDto.Editions = Editions.ToList();
-            songDto.Tags = Tags.ToList();
-            songDto.Creators = Creators.ToList();
-            songDto.ProvidedBy = ProvidedBy;
-            songDto.Comment = Comment;
-            songDto.Rendition = Rendition;
-        }
-
         public SongDto ToDto()
         {
             var songDto = new SongDto
             {
-                HasAudio = !string.IsNullOrEmpty(Audio),
-                HasCover = !string.IsNullOrEmpty(Cover),
-                HasBackground = !string.IsNullOrEmpty(Background),
-                HasVideo = !string.IsNullOrEmpty(Video),
-                HasVocals = !string.IsNullOrEmpty(Vocals),
-                HasInstrumental = !string.IsNullOrEmpty(Instrumental),
-                HasFatal = Alerts.Any(a => a.Level == AlertLevel.Fatal),
-                HasErrors = Alerts.Any(a => a.Level == AlertLevel.Error),
-                HasWarnings = Alerts.Any(a => a.Level == AlertLevel.Warning)
-            };
-            FeedBaseSongDto(songDto);
-            return songDto;
-        }
-
-        public DetailedSongDto ToDetailedDto()
-        {
-            var detailedSongDto = new DetailedSongDto
-            {
+                Id = Id,
+                Version = Version,
+                Bpm = Bpm,
+                Title = Title,
+                Artist = Artist,
                 Audio = Audio,
+                Gap = Gap,
+                Start = Start,
+                End = End,
+                Players = Players.Select(p => p.ToDto()).ToList(),
                 Cover = Cover,
                 Background = Background,
                 Video = Video,
@@ -205,13 +171,25 @@ namespace KaraWeb.Core.Persistence.Models.Songs
                 VideoUrl = VideoUrl,
                 CoverUrl = CoverUrl,
                 BackgroundUrl = BackgroundUrl,
+                VideoGap = VideoGap,
+                PreviewStart = PreviewStart,
+                Medley = Medley?.ToDto(),
+                Year = Year,
+                Genres = Genres.ToList(),
+                Languages = Languages.ToList(),
+                Editions = Editions.ToList(),
+                Tags = Tags.ToList(),
+                Creators = Creators.ToList(),
+                ProvidedBy = ProvidedBy,
+                Comment = Comment,
+                Rendition = Rendition,
                 NotManagedHeaders = NotManagedHeaders.ToList(),
-                Alerts = Alerts.Select(a => a.ToDto()).OrderBy(a => a.FileLine).ToList(),
-                Notes = Notes.Select(n => n.ToDto()).OrderBy(n => n.PlayerNumber).ThenBy(n => n.StartBeat).ToList(),
-                LastParsedTime = LastParseTime
+                LastParsedTime = LastParseTime,
+                HasFatal = Alerts.Any(a => a.Level == AlertLevel.Fatal),
+                HasErrors = Alerts.Any(a => a.Level == AlertLevel.Error),
+                HasWarnings = Alerts.Any(a => a.Level == AlertLevel.Warning)
             };
-            FeedBaseSongDto(detailedSongDto);
-            return detailedSongDto;
+            return songDto;
         }
     }
 }

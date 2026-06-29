@@ -19,18 +19,21 @@ namespace KaraWeb.Tests.SDK
             Assert.That(library, Is.Not.Null, "We should have load at least one library");
 
             var librarySong = await connector.Libraries.GetSongsAsync(library.Id, false)
-                .FirstOrDefaultAsync(s => s.HasAudio);
+                .FirstOrDefaultAsync(s => !string.IsNullOrEmpty(s.Audio));
             Assert.That(librarySong, Is.Not.Null,
                 $"The library with ID {library.Id} should contains at least one song with audio");
 
-            var songDetails = await connector.Songs.GetSongDetailsAsync(librarySong.Id);
-            Assert.That(songDetails, Is.Not.Null,
+            var song = await connector.Songs.GetSongAsync(librarySong.Id);
+            Assert.That(song, Is.Not.Null,
                 $"We should be able to get song details for {librarySong.Title} - {librarySong.Artist}");
 
-            Assert.That(songDetails.Id, Is.EqualTo(librarySong.Id),
+            Assert.That(song.Id, Is.EqualTo(librarySong.Id),
                 "Retrieved song details are not those of the same song..");
 
-            await using var audioStream = await connector.Songs.GetSongFileStreamAsync(songDetails.Id, FileType.Audio);
+            var notes = await connector.Songs.GetSongNotesAsync(song.Id).ToListAsync();
+            Assert.That(notes, Is.Not.Empty, "There was no note retrieved");
+
+            await using var audioStream = await connector.Songs.GetSongFileStreamAsync(song.Id, FileType.Audio);
             Assert.That(audioStream, Is.Not.Null,
                 $"We should be able to get the audio stream for {librarySong.Title} - {librarySong.Artist}");
         }
