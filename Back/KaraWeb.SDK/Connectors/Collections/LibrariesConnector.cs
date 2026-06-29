@@ -27,7 +27,7 @@ namespace KaraWeb.SDK.Connectors.Collections
         public async IAsyncEnumerable<LibraryDto> GetLibrariesAsync(
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var response = await _httpClient.GetAsync(_baseUri, cancellationToken);
+            var response = await _httpClient.GetAsync(_baseUri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
                 throw new KaraWebException(
@@ -65,7 +65,7 @@ namespace KaraWeb.SDK.Connectors.Collections
                 Query = $"onlyLoadableSongs={onlyLoadableSongs}"
             };
 
-            var response = await _httpClient.GetAsync(uriBuilder.Uri, cancellationToken);
+            var response = await _httpClient.GetAsync(uriBuilder.Uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
                 throw new KaraWebException(

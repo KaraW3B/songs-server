@@ -72,7 +72,7 @@ namespace KaraWeb.Host.Controllers
         /// </summary>
         /// <param name="songId">The ID of the song</param>
         /// <param name="cancellationToken"></param>
-        [HttpGet("{songId}/notes")]
+        [HttpGet("{songId}/alerts")]
         [SwaggerResponse(StatusCodes.Status200OK, "The asked song's alerts", typeof(List<SongAlertDto>))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "No song found with the given ID", typeof(string))]
         public async Task<ActionResult<List<SongNoteDto>>> GetSongAlertsAsync([FromRoute] Guid songId,

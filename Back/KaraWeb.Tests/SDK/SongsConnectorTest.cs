@@ -11,7 +11,7 @@ namespace KaraWeb.Tests.SDK
     public sealed class SongsConnectorTest
     {
         [Test, Explicit("Test SDK methods with a real API instance")]
-        public async Task TestSDKInteration()
+        public async Task TestSDKInteraction()
         {
             using var connector = new KaraWebConnector(new Uri("http://localhost:7373/api"));
 
