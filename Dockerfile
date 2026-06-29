@@ -19,4 +19,4 @@ RUN chown -R KaraWeb:KaraWeb /app
 RUN rm -r /KaraWebSrc
 
 USER $UUID:$GUID
-ENTRYPOINT ["dotnet", "run", "KaraWeb.dll"]
+ENTRYPOINT ["dotnet", "KaraWeb.Host.dll"]
