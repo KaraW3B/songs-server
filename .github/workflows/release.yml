@@ -46,13 +46,22 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/karaw3b/server
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ env.releaseVersion }}
           
       - name: Build and push Docker image
-        id: build-and-push
         uses: docker/build-push-action@v7.3.0
         with:
           context: .
           push: true
-          tags: karaw3b/server:latest , karaw3b/server:${{ env.releaseVersion }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
