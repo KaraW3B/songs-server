@@ -22,7 +22,7 @@ To start a server instance with the latest version just runs the following comma
 	-p 7373:7373 \
 	-v /path/to/my/songs:/songs \
 	-v /path/to/database:/app/data \
-	KaraW3B/server:latest
+	ghcr.io/karaw3b/server:latest
 ```
 
 > If you need to use a different port on your host for example 1234 just replace '-p 7373:7373' with '-p 1234:7373'
