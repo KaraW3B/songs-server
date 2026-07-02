@@ -38,7 +38,6 @@ jobs:
       with:
         context: .
         push: false
-        tags:
-          - karaw3b/server:nightly
+        tags: karaw3b/server:pr
         cache-from: type=gha
         cache-to: type=gha,mode=max
