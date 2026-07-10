@@ -7,7 +7,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="FFMpegCore" />
-		<PackageReference Include="KaraW3B.SDK" />
+		<PackageReference Include="KaraW3B.SDK.Interpreters" />
 		<PackageReference Include="log4net" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />

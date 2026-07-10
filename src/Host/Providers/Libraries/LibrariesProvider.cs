@@ -10,7 +10,7 @@ using KaraW3B.Server.Core.Persistence;
 using KaraW3B.Server.Core.Persistence.Models.Libraries;
 using KaraW3B.Server.Core.Services.FFmpeg;
 using KaraW3B.Server.Core.Services.Scheduler;
-using KaraW3B.Server.Core.Services.SongParser;
+using KaraW3B.Server.Core.Services.SongFileInterpreter;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
 
@@ -19,15 +19,15 @@ namespace KaraW3B.Server.Host.Providers.Libraries
     internal sealed class LibrariesProvider : ILibrariesProvider
     {
         private readonly KaraW3BDbContext _dbContext;
-        private readonly ISongParserService _songParserService;
+        private readonly ISongFileInterpreterService _songFileInterpreterService;
         private readonly ISchedulerService _schedulerService;
         private readonly IFFmpegService _ffmpegService;
 
         public LibrariesProvider(KaraW3BDbContext dbContext,
-            ISongParserService songParserService, ISchedulerService schedulerService, IFFmpegService ffmpegService)
+            ISongFileInterpreterService songFileInterpreterService, ISchedulerService schedulerService, IFFmpegService ffmpegService)
         {
             _dbContext = dbContext;
-            _songParserService = songParserService;
+            _songFileInterpreterService = songFileInterpreterService;
             _schedulerService = schedulerService;
             _ffmpegService = ffmpegService;
             ReinitAnalyzingFlags();
@@ -92,7 +92,7 @@ namespace KaraW3B.Server.Host.Providers.Libraries
             {
                 [AnalyzeLibraryJob.LibraryKey] = library,
                 [AnalyzeLibraryJob.AnalyzeTypeKey] = analyzeType,
-                [AnalyzeLibraryJob.SongParserServiceKey] = _songParserService,
+                [AnalyzeLibraryJob.SongParserServiceKey] = _songFileInterpreterService,
                 [AnalyzeLibraryJob.FFmpegServiceKey] = _ffmpegService
             };
             return _schedulerService.StartJob(AnalyzeLibraryJob.JobKey, dataMap, cancellationToken);

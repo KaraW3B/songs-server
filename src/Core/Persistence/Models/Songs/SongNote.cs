@@ -9,7 +9,7 @@ namespace KaraW3B.Server.Core.Persistence.Models.Songs
     [Table("SongNotes")]
     [PrimaryKey(nameof(SongId), nameof(FileLine))]
     [Index(nameof(PlayerNumber))]
-    public class SongNote : IAnalyzableSongNote
+    public class SongNote : ISongNote
     {
         public int FileLine { get; set; }
 
