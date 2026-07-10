@@ -15,7 +15,7 @@ using KaraW3B.Server.Core.Persistence;
 using KaraW3B.Server.Core.Persistence.Models.Libraries;
 using KaraW3B.Server.Core.Persistence.Models.Songs;
 using KaraW3B.Server.Core.Services.FFmpeg;
-using KaraW3B.Server.Core.Services.SongParser;
+using KaraW3B.Server.Core.Services.SongFileInterpreter;
 using log4net;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
@@ -46,7 +46,7 @@ namespace KaraW3B.Server.Core.Jobs
                 return;
             }
 
-            if (context.MergedJobDataMap[SongParserServiceKey] is not ISongParserService songParserService)
+            if (context.MergedJobDataMap[SongParserServiceKey] is not ISongFileInterpreterService songParserService)
             {
                 _logger.Error("Unable to retrieve a valid song parser service from job context");
                 return;
@@ -114,7 +114,7 @@ namespace KaraW3B.Server.Core.Jobs
             return Convert.ToHexStringLower(hashBytes);
         }
 
-        private async ValueTask ProcessSongFile(ISongParserService songParserService, IFFmpegService fFmpegService, Guid libraryId,
+        private async ValueTask ProcessSongFile(ISongFileInterpreterService songFileInterpreterService, IFFmpegService fFmpegService, Guid libraryId,
             LibraryAnalyzeType analyzeType,
             ConcurrentBag<Guid> parsedSongIds, FileInfo songFile, CancellationToken cancellationToken)
         {
@@ -154,7 +154,7 @@ namespace KaraW3B.Server.Core.Jobs
                         isNew = true;
                     }
 
-                    if (!await songParserService.ParseSongAsync(songFile, song, cancellationToken))
+                    if (!await songFileInterpreterService.ParseSongAndCheckAsync(songFile, song, cancellationToken))
                     {
                         _logger.Error($"Unable to parse data from '{songFile.FullName}'.. Ignoring it..");
                         return;
