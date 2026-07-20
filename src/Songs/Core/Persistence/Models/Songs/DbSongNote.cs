@@ -22,7 +22,7 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Songs
         [ForeignKey(nameof(SongId))]
         public virtual DbSong Song { get; set; }
 
-        [Required, Column("Type")]
+        [Required]
         public NoteType NoteType { get; set; }
 
         [Required]
