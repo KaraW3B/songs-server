@@ -10,10 +10,6 @@
 
 The KaraW3B songs server is the hearth of the project and will serves all your songs collections through an API
 
-## 📝 Contract
-
-It must be able to read all version specified by the [UltraStar format rules](https://github.com/UltraStar-Deluxe/format)
-
 ## 📦 Packages
 
 KaraW3B NuGets aims to simplify integration of KaraW3B songs server in thirdparty clients
