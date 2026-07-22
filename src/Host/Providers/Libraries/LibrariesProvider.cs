@@ -30,20 +30,6 @@ namespace KaraW3B.Server.Songs.Host.Providers.Libraries
             _songFileInterpreterService = songFileInterpreterService;
             _schedulerService = schedulerService;
             _ffmpegService = ffmpegService;
-            ReinitAnalyzingFlags();
-        }
-
-        private void ReinitAnalyzingFlags()
-        {
-            foreach (var library in _dbContext.Libraries)
-            {
-                if (library.IsAnalyzing)
-                {
-                    library.IsAnalyzing = false;
-                }
-            }
-
-            _dbContext.SaveChanges();
         }
 
         public async IAsyncEnumerable<Library> GetLibrariesAsync(
