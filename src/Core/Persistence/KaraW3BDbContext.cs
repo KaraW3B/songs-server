@@ -55,6 +55,9 @@ namespace KaraW3B.Server.Songs.Core.Persistence
                 await using var context = new KaraW3BDbContext();
                 await context.Database.MigrateAsync();
                 logger.Info("Database initialized successfully");
+
+                ReinitFlagsAfterPanicShutdown(context);
+
                 return true;
             }
             catch (Exception ex)
@@ -62,6 +65,18 @@ namespace KaraW3B.Server.Songs.Core.Persistence
                 logger.Fatal($"Error when initializing the database: {ex}");
                 return false;
             }
+        }
+
+        private static async Task ReinitFlagsAfterPanicShutdown(KaraW3BDbContext dbContext)
+        {
+            foreach(var library in dbContext.Libraries)
+            {
+                if(library.IsAnalyzing)
+                {
+                    library.IsAnalyzing = false;
+                }
+            }
+            await dbContext.SaveChangesAsync();
         }
     }
 }
