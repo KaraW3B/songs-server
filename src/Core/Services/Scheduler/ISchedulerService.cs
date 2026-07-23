@@ -6,5 +6,6 @@ namespace KaraW3B.Server.Songs.Core.Services.Scheduler
     public interface ISchedulerService
     {
         Task<ApiScheduler> RegisterSchedulerAsync(string schedulerName, int maxConcurrency, CancellationToken cancellationToken);
+        bool IsSchedulerRegistered(string schedulerName);
     }
 }

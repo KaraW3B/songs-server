@@ -19,6 +19,8 @@ namespace KaraW3B.Server.Songs.Host.Providers.Libraries
 {
     internal sealed class LibrariesProvider : ILibrariesProvider
     {
+        private const string SchedulerName = "Libraries";
+
         private readonly KaraW3BDbContext _dbContext;
         private readonly ISongFileInterpreterService _songFileInterpreterService;
         private readonly IFFmpegService _ffmpegService;
@@ -31,7 +33,12 @@ namespace KaraW3B.Server.Songs.Host.Providers.Libraries
             _songFileInterpreterService = songFileInterpreterService;
             _ffmpegService = ffmpegService;
 
-            _scheduler = schedulerService.RegisterSchedulerAsync("Libraries",
+            if (schedulerService.IsSchedulerRegistered(SchedulerName))
+            {
+                return;
+            }
+
+            _scheduler = schedulerService.RegisterSchedulerAsync(SchedulerName,
                     settingsService.Settings.ConcurrencySettings.MaxLibraryAnalyzesConcurrency, CancellationToken.None)
                 .Result;
             _scheduler.RegisterJobAsync<AnalyzeLibraryJob>(AnalyzeLibraryJob.JobKey, CancellationToken.None).Wait();
