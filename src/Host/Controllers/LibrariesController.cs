@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using KaraW3B.Server.Songs.Core.Persistence.Models.Libraries;
 using KaraW3B.Server.Songs.Host.Providers.Libraries;
 using KaraW3B.Server.Songs.Host.Providers.Songs;
 using KaraW3B.Server.Songs.Models.Libraries;
@@ -119,7 +121,7 @@ namespace KaraW3B.Server.Songs.Host.Controllers
                 return NotFound($"The library with ID {libraryId} doesn't exist");
             }
 
-            if (!library.CanStartAnalyze)
+            if (DbLibrary.AnalyzingStatus.Contains(library.AnalyzeStatus))
             {
                 return BadRequest($"The library with ID {libraryId} is already analyzing");
             }

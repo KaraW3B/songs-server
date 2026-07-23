@@ -35,14 +35,11 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Libraries
 
         public string LastAnalyzeMessage { get; set; }
 
-        [NotMapped]
-        public bool CanStartAnalyze => !AnalyzingStatus.Contains(AnalyzeStatus);
-
         public static async Task<bool> TryMarkAsPendingAsync(KaraW3BDbContext dbContext, Guid libraryId,
             CancellationToken cancellationToken)
         {
             var updatedRows = await dbContext.Libraries
-                .Where(l => l.Id == libraryId && l.CanStartAnalyze)
+                .Where(l => l.Id == libraryId && !AnalyzingStatus.Contains(l.AnalyzeStatus))
                 .ExecuteUpdateAsync(
                 s => s
                     .SetProperty(l => l.AnalyzeStatus, LibraryAnalyzeStatus.Pending)
