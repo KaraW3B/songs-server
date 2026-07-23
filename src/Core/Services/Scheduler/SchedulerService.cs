@@ -21,11 +21,16 @@ namespace KaraW3B.Server.Songs.Core.Services.Scheduler
 
             var schedulerBuilder = SchedulerBuilder.Create();
             schedulerBuilder.SchedulerName = schedulerName;
-            schedulerBuilder.SchedulerId = Guid.NewGuid().ToString();
+            schedulerBuilder.SchedulerId = schedulerName;
             var scheduler = await schedulerBuilder.UseDefaultThreadPool(x => x.MaxConcurrency = maxConcurrency).BuildScheduler();
             await scheduler.Start(cancellationToken);
             _logger.Info($"Scheduler '{scheduler.SchedulerName}' was started");
             return new ApiScheduler(scheduler, _logger);
+        }
+
+        public bool IsSchedulerRegistered(string schedulerName)
+        {
+            return SchedulerRepository.Instance.Lookup(schedulerName, schedulerName) != null;
         }
 
         public async ValueTask DisposeAsync()
