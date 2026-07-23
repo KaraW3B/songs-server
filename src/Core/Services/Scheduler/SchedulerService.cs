@@ -28,9 +28,10 @@ namespace KaraW3B.Server.Songs.Core.Services.Scheduler
             return new ApiScheduler(scheduler, _logger);
         }
 
-        public bool IsSchedulerRegistered(string schedulerName)
+        public ApiScheduler GetScheduler(string schedulerName)
         {
-            return SchedulerRepository.Instance.Lookup(schedulerName, schedulerName) != null;
+            var scheduler = SchedulerRepository.Instance.Lookup(schedulerName, schedulerName);
+            return scheduler == null ? null : new ApiScheduler(scheduler, _logger);
         }
 
         public async ValueTask DisposeAsync()

@@ -35,7 +35,8 @@ namespace KaraW3B.Server.Songs.Host.Providers.Libraries
             _songFileInterpreterService = songFileInterpreterService;
             _ffmpegService = ffmpegService;
 
-            if (schedulerService.IsSchedulerRegistered(SchedulerName))
+            _scheduler = schedulerService.GetScheduler(SchedulerName);
+            if (_scheduler != null)
             {
                 return;
             }
