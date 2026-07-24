@@ -6,7 +6,7 @@ RUN apk update && apk add ffmpeg libgdiplus
 
 ARG UUID=1001
 ARG GUID=1001
-RUN addgroup -g $GUID -S KaraW3B && adduser -u $UUID -G KaraW3B -s /bin/bash KaraW3B
+RUN addgroup -g $GUID -S KaraW3B && adduser -D -u $UUID -G KaraW3B -s /bin/bash KaraW3B
 
 RUN mkdir /app
 COPY bin/Release/ /app/
