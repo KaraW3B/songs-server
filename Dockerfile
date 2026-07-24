@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine3.24
 
 EXPOSE 7373
 
-RUN apk update && apk add -y ffmpeg libgdiplus
+RUN apk update && apk add ffmpeg libgdiplus
 
 ARG UUID=1001
 ARG GUID=1001
