@@ -14,7 +14,7 @@
         /// </summary>
         ConversionMandatory,
         /// <summary>
-        ///     A conversion to format MP4 H.264 is recommended to have better performances and compatibility in web browsers
+        ///     A conversion to format MP4 H.264 is recommended to have better performances and compatibility in web browsers (note sure it will work)
         /// </summary>
         ConversionRecommended,
         /// <summary>

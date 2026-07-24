@@ -2,17 +2,31 @@
 using System.Threading.Tasks;
 using FFMpegCore;
 using FFMpegCore.Arguments;
-using FFMpegCore.Enums;
 using KaraW3B.Server.Songs.Core.Helpers;
-using KaraW3B.Server.Songs.Core.Models;
 using KaraW3B.Server.Songs.Core.Services.Settings;
 using System;
+using System.Linq;
 using KaraW3B.Server.Songs.Models.Songs;
 
 namespace KaraW3B.Server.Songs.Core.Services.FFmpeg
 {
     public sealed class FFmpegService : IFFmpegService
     {
+        // See https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Video_codecs
+        private const string PreferredVideoFormat = "MP4";
+        private const string PreferredVideoCodec = "H264";
+
+        private const string PreferredAudioFormat = "MP3";
+
+        // Probably to enrich
+        private static readonly string[] BrowsersVideoSupportedCodecs =
+        {
+            "H264",
+            "H265",
+            "AV1",
+            "VP9"
+        };
+
         private const string EncodedByTag = "encoded_by";
 
         public FFmpegService(ISettingsService settingsService)
@@ -34,7 +48,7 @@ namespace KaraW3B.Server.Songs.Core.Services.FFmpeg
                 return BrowserCompatibility.Compatible;
             }
 
-            if (!mediaInfos.Format.FormatName.Contains("mp4"))
+            if (!mediaInfos.Format.FormatName.ToUpperInvariant().Contains(PreferredVideoFormat))
             {
                 return BrowserCompatibility.ConversionMandatory;
             }
@@ -45,7 +59,12 @@ namespace KaraW3B.Server.Songs.Core.Services.FFmpeg
                 return BrowserCompatibility.ConversionMandatory;
             }
 
-            if (videoStream.CodecName != VideoCodec.LibX264.Name)
+            if (BrowsersVideoSupportedCodecs.Contains(videoStream.CodecName.ToUpperInvariant()))
+            {
+                return BrowserCompatibility.ConversionMandatory;
+            }
+
+            if (videoStream.CodecName.ToUpperInvariant() != PreferredVideoCodec)
             {
                 return BrowserCompatibility.ConversionRecommended;
             }
@@ -63,7 +82,7 @@ namespace KaraW3B.Server.Songs.Core.Services.FFmpeg
                 return BrowserCompatibility.Compatible;
             }
 
-            if (mediaInfos.Format.FormatName != "mp3")
+            if (mediaInfos.Format.FormatName != PreferredAudioFormat)
             {
                 return BrowserCompatibility.ConversionMandatory;
             }
@@ -74,7 +93,7 @@ namespace KaraW3B.Server.Songs.Core.Services.FFmpeg
                 return BrowserCompatibility.ConversionMandatory;
             }
 
-            if (audioStream.CodecName != "mp3")
+            if (audioStream.CodecName != PreferredAudioFormat)
             {
                 return BrowserCompatibility.ConversionRecommended;
             }
