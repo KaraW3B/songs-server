@@ -82,7 +82,7 @@ namespace KaraW3B.Server.Songs.Core.Services.FFmpeg
                 return BrowserCompatibility.Compatible;
             }
 
-            if (mediaInfos.Format.FormatName != PreferredAudioFormat)
+            if (mediaInfos.Format.FormatName.ToUpperInvariant() != PreferredAudioFormat)
             {
                 return BrowserCompatibility.ConversionMandatory;
             }
@@ -93,7 +93,7 @@ namespace KaraW3B.Server.Songs.Core.Services.FFmpeg
                 return BrowserCompatibility.ConversionMandatory;
             }
 
-            if (audioStream.CodecName != PreferredAudioFormat)
+            if (audioStream.CodecName.ToUpperInvariant() != PreferredAudioFormat)
             {
                 return BrowserCompatibility.ConversionRecommended;
             }
