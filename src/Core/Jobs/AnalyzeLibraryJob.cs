@@ -270,8 +270,9 @@ namespace KaraW3B.Server.Songs.Core.Jobs
                 return;
             }
 
+            var path = Path.Combine(song.SongDirectory, file.FilePath);
             file.FFProbeInfo =
-                await ffmpegService.GetFileInfo(file.FilePath, fileType != FileType.Video, cancellationToken);
+                await ffmpegService.GetFileInfo(path, fileType != FileType.Video, cancellationToken);
         }
     }
 }
