@@ -1,12 +1,10 @@
 ﻿using KaraW3B.Server.Songs.Core.Helpers;
-using KaraW3B.Server.Songs.Core.Models;
 using KaraW3B.Server.Songs.Core.Persistence;
 using KaraW3B.Server.Songs.Core.Persistence.Models.Libraries;
 using KaraW3B.Server.Songs.Core.Persistence.Models.Songs;
 using KaraW3B.Server.Songs.Core.Services.FFmpeg;
 using KaraW3B.Server.Songs.Core.Services.SongFileInterpreter;
 using KaraW3B.Server.Songs.Models.Libraries;
-using KaraW3B.Server.Songs.Models.Songs;
 using KaraW3B.Server.Songs.Models.Songs.Alerts;
 using log4net;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +17,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using KaraW3B.Server.Songs.Models.Songs.Files;
 
 namespace KaraW3B.Server.Songs.Core.Jobs
 {
@@ -222,11 +221,10 @@ namespace KaraW3B.Server.Songs.Core.Jobs
         {
             if (!CheckSongFileExistence(song, fileType))
             {
-                song.SetBrowserCompatibilityStatus(fileType, BrowserCompatibility.NotChecked);
                 return;
             }
 
-            await CheckSongFileBrowserCompatibility(ffmpegService, song, fileType, cancellationToken);
+            await SetFFProbeInfos(ffmpegService, song, fileType, cancellationToken);
         }
 
         private static bool CheckSongFileExistence(DbSong song, FileType fileType)
@@ -237,58 +235,43 @@ namespace KaraW3B.Server.Songs.Core.Jobs
                 return false;
             }
 
-            if (!song.SongFileExist(fileType))
+            if (song.SongFileExist(fileType))
             {
-                song.Alerts.Add(new DbSongAlert
-                {
-                    Level = AlertLevel.Error,
-                    Type = AlertType.File,
-                    Message = $"The {fileType} file '{filePath}' doesn't exist on server"
-                });
-                return false;
+                return true;
             }
 
-            return true;
+            song.Alerts.Add(new DbSongAlert
+            {
+                Level = fileType == FileType.Audio ? AlertLevel.Fatal : AlertLevel.Error,
+                Type = AlertType.File,
+                Message = $"The {fileType} file '{filePath}' doesn't exist on server"
+            });
+            return false;
         }
 
-        private static async Task CheckSongFileBrowserCompatibility(IFFmpegService ffmpegService, DbSong song, FileType fileType, CancellationToken cancellationToken)
+        private static async Task SetFFProbeInfos(IFFmpegService ffmpegService, DbSong song, FileType fileType, CancellationToken cancellationToken)
         {
             if (fileType is FileType.Cover or FileType.Background)
             {
                 return;
             }
 
-            BrowserCompatibility browserCompatibility;
-            var filePath = song.GetSongFilePath(fileType);
-            if (string.IsNullOrEmpty(filePath))
+            var file = fileType switch
             {
-                browserCompatibility = BrowserCompatibility.NotChecked;
-            }
-            else
+                FileType.Audio => song.Audio,
+                FileType.Video => song.Video,
+                FileType.Vocals => song.Vocals,
+                FileType.Instrumental => song.Instrumental,
+                _ => null
+            };
+
+            if (file == null)
             {
-                if (fileType == FileType.Video)
-                {
-                    browserCompatibility = await ffmpegService.GetVideoCompatibilityAsync(filePath, cancellationToken);
-                }
-                else
-                {
-                    browserCompatibility = await ffmpegService.GetAudioCompatibilityAsync(filePath, cancellationToken);
-                }
+                return;
             }
 
-            song.SetBrowserCompatibilityStatus(fileType, browserCompatibility);
-
-            if (browserCompatibility != BrowserCompatibility.Compatible)
-            {
-                song.Alerts.Add(new DbSongAlert
-                {
-                    Level = browserCompatibility == BrowserCompatibility.ConversionMandatory ? AlertLevel.Error : AlertLevel.Warning,
-                    Type = AlertType.File,
-                    Message = browserCompatibility == BrowserCompatibility.ConversionMandatory
-                        ? $"The {fileType} file is not compatible with WEB. Please convert it!"
-                        : $"The {fileType} file may be not fully compatible with WEB. It's recommended to convert it"
-                });
-            }
+            file.FFProbeInfo =
+                await ffmpegService.GetFileInfo(file.FilePath, fileType != FileType.Video, cancellationToken);
         }
     }
 }

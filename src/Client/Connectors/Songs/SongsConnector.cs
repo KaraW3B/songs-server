@@ -10,6 +10,7 @@ using KaraW3B.Client.Songs.Helpers;
 using KaraW3B.Server.Songs.Models.Helpers;
 using KaraW3B.Server.Songs.Models.Songs;
 using KaraW3B.Server.Songs.Models.Songs.Alerts;
+using KaraW3B.Server.Songs.Models.Songs.Files;
 using KaraW3B.Server.Songs.Models.Songs.Notes;
 
 namespace KaraW3B.Client.Songs.Connectors.Songs

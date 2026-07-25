@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using KaraW3B.Client.Songs.Connectors;
-using KaraW3B.Server.Songs.Models.Songs;
+using KaraW3B.Server.Songs.Models.Songs.Files;
 using NUnit.Framework;
 
 namespace KaraW3B.Server.Songs.Tests.Connectors
@@ -19,7 +19,7 @@ namespace KaraW3B.Server.Songs.Tests.Connectors
             Assert.That(library, Is.Not.Null, "We should have load at least one library");
 
             var librarySong = await connector.Libraries.GetSongsAsync(library.Id, false)
-                .FirstOrDefaultAsync(s => !string.IsNullOrEmpty(s.Audio));
+                .FirstOrDefaultAsync(s => !string.IsNullOrEmpty(s.Audio?.FilePath));
             Assert.That(librarySong, Is.Not.Null,
                 $"The library with ID {library.Id} should contains at least one song with audio");
 

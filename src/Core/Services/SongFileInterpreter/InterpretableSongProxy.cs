@@ -5,7 +5,7 @@ using KaraW3B.Server.Songs.Core.Persistence.Models.Songs;
 
 namespace KaraW3B.Server.Songs.Core.Services.SongFileInterpreter
 {
-    internal sealed class InterpretableSongProxy : IInterpretableSong
+    internal sealed class InterpretableSongProxy : IInterpretableSong, IAnalyzableSong
     {
         private readonly DbSong _song;
 
@@ -117,8 +117,8 @@ namespace KaraW3B.Server.Songs.Core.Services.SongFileInterpreter
 
         public string Audio
         {
-            get => _song.Audio;
-            set => _song.Audio = value;
+            get => _song.Audio?.FilePath;
+            set => _song.Audio = new DbSongFile { FilePath = value };
         }
 
         public decimal Bpm
@@ -147,8 +147,8 @@ namespace KaraW3B.Server.Songs.Core.Services.SongFileInterpreter
 
         public string Video
         {
-            get => _song.Video;
-            set => _song.Video = value;
+            get => _song.Video?.FilePath;
+            set => _song.Video = new DbSongFile { FilePath = value };
         }
 
         public TimeSpan? VideoGap
@@ -159,14 +159,14 @@ namespace KaraW3B.Server.Songs.Core.Services.SongFileInterpreter
 
         public string Vocals
         {
-            get => _song.Vocals;
-            set => _song.Vocals = value;
+            get => _song.Vocals?.FilePath;
+            set => _song.Vocals = new DbSongFile { FilePath = value };
         }
 
         public string Instrumental
         {
-            get => _song.Instrumental;
-            set => _song.Instrumental = value;
+            get => _song.Instrumental?.FilePath;
+            set => _song.Instrumental = new DbSongFile { FilePath = value };
         }
 
         public TimeSpan? PreviewStart

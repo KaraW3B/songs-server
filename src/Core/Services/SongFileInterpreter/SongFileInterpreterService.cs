@@ -94,7 +94,9 @@ namespace KaraW3B.Server.Songs.Core.Services.SongFileInterpreter
 
         private static async Task AnalyzeSongErrors(DbSong song, CancellationToken cancellationToken)
         {
-            var analyzeResult = await SongValidationHelper.CheckFullSongErrorsAsync(song, song.Notes, cancellationToken);
+            var songProxy = new InterpretableSongProxy(song);
+
+            var analyzeResult = await SongValidationHelper.CheckFullSongErrorsAsync(songProxy, song.Notes, cancellationToken);
             foreach (var infoError in analyzeResult.InfoErrors)
             {
                 song.Alerts.Add(new DbSongAlert

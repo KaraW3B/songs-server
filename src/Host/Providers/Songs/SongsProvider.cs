@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using KaraW3B.Server.Songs.Core.Persistence;
 using KaraW3B.Server.Songs.Core.Persistence.Models.Songs;
 using KaraW3B.Server.Songs.Models.Songs;
+using KaraW3B.Server.Songs.Models.Songs.Alerts;
+using KaraW3B.Server.Songs.Models.Songs.Files;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +35,7 @@ namespace KaraW3B.Server.Songs.Host.Providers.Songs
                                .ToAsyncEnumerable().WithCancellation(cancellationToken))
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (onlyLoadableSongs && song.IsNotLoadable())
+                if (onlyLoadableSongs && song.Alerts.Any(a => a.Level == AlertLevel.Fatal))
                 {
                     continue;
                 }

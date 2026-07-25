@@ -4,7 +4,7 @@ using KaraW3B.Server.Songs.Models.Songs;
 
 namespace KaraW3B.Server.Songs.Core.Persistence.Models.Songs
 {
-    public class DbSongMedley : ISongMedley
+    public sealed class DbSongMedley : ISongMedley
     {
         public TimeSpan MedleyStart { get; set; }
 

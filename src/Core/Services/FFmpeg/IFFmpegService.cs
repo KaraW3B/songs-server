@@ -1,13 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using KaraW3B.Server.Songs.Core.Models;
-using KaraW3B.Server.Songs.Models.Songs;
+using KaraW3B.Server.Songs.Models.Songs.Files;
 
 namespace KaraW3B.Server.Songs.Core.Services.FFmpeg
 {
     public interface IFFmpegService
     {
-        public Task<BrowserCompatibility> GetVideoCompatibilityAsync(string videoPath, CancellationToken cancellationToken);
-        public Task<BrowserCompatibility> GetAudioCompatibilityAsync(string audioPath, CancellationToken cancellationToken);
+        public Task<FFProbeInfo> GetFileInfo(string filePath, bool audio, CancellationToken cancellationToken);
     }
 }
