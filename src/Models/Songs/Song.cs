@@ -1,6 +1,6 @@
-﻿using System;
+﻿using KaraW3B.Server.Songs.Models.Songs.Files;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace KaraW3B.Server.Songs.Models.Songs
 {
@@ -38,10 +38,9 @@ namespace KaraW3B.Server.Songs.Models.Songs
         public string Artist { get; set; }
 
         /// <summary>
-        ///     The audio file path
+        ///     The audio file info
         /// </summary>
-        /// <remarks>must be a relative path</remarks>
-        public string Audio { get; set; }
+        public SongFileInfo Audio { get; set; }
 
         /// <summary>
         ///     The GAP between start of the audio and first beat
@@ -63,11 +62,6 @@ namespace KaraW3B.Server.Songs.Models.Songs
         /// </summary>
         public List<SongPlayer> Players { get; set; } = new();
 
-        public Dictionary<int, string> GetPlayers()
-        {
-            return Players.ToDictionary(p => p.PlayerNumber, p => p.Name);
-        }
-
         #endregion
 
         #region Extra headers
@@ -85,22 +79,19 @@ namespace KaraW3B.Server.Songs.Models.Songs
         public string Background { get; set; }
 
         /// <summary>
-        ///     The video file path
+        ///     The video file info
         /// </summary>
-        /// <remarks>must be a relative path</remarks>
-        public string Video { get; set; }
+        public SongFileInfo Video { get; set; }
 
         /// <summary>
-        ///     The vocals file path
+        ///     The vocals file info
         /// </summary>
-        /// <remarks>must be a relative path</remarks>
-        public string Vocals { get; set; }
+        public SongFileInfo Vocals { get; set; }
 
         /// <summary>
-        ///     The instrumental file path
+        ///     The instrumental file info
         /// </summary>
-        /// <remarks>must be a relative path</remarks>
-        public string Instrumental { get; set; }
+        public SongFileInfo Instrumental { get; set; }
 
         /// <summary>
         ///     The source of the audio used
@@ -216,26 +207,6 @@ namespace KaraW3B.Server.Songs.Models.Songs
         ///     The last time when the song was parsed from disk's file
         /// </summary>
         public DateTime LastParsedTime { get; set; }
-
-        /// <summary>
-        ///     The audio file compatibility status with web browsers
-        /// </summary>
-        public BrowserCompatibility AudioCompatibility { get; set; }
-
-        /// <summary>
-        ///     The video file compatibility status with web browsers
-        /// </summary>
-        public BrowserCompatibility VideoCompatibility { get; set; }
-
-        /// <summary>
-        ///     The vocals file compatibility status with web browsers
-        /// </summary>
-        public BrowserCompatibility VocalsCompatibility { get; set; }
-
-        /// <summary>
-        ///     The instrumental file compatibility status with web browsers
-        /// </summary>
-        public BrowserCompatibility InstrumentalCompatibility { get; set; }
 
         #endregion
     }

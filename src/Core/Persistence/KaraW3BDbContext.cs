@@ -42,7 +42,8 @@ namespace KaraW3B.Server.Songs.Core.Persistence
                 .Properties<Version>()
                 .HaveConversion<VersionValueConverter>();
 
-            configurationBuilder.Properties<DbSongMedley>().HaveConversion<SongMedleyValueConverter>();
+            configurationBuilder.Properties<DbSongMedley>().HaveConversion<JsonValueConverter<DbSongMedley>>();
+            configurationBuilder.Properties<DbSongFile>().HaveConversion<JsonValueConverter<DbSongFile>>();
         }
 
         public static async Task<bool> EnsureDatabase(ILog logger, CancellationToken cancellationToken)

@@ -8,13 +8,14 @@ using KaraW3B.Interpreters.Interfaces;
 using KaraW3B.Server.Songs.Core.Persistence.Models.Libraries;
 using KaraW3B.Server.Songs.Models.Songs;
 using KaraW3B.Server.Songs.Models.Songs.Alerts;
+using KaraW3B.Server.Songs.Models.Songs.Files;
 using Microsoft.EntityFrameworkCore;
 
 namespace KaraW3B.Server.Songs.Core.Persistence.Models.Songs
 {
     [Table("Songs")]
     [PrimaryKey(nameof(Id))]
-    public class DbSong : IAnalyzableSong
+    public class DbSong
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
@@ -36,7 +37,7 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Songs
         [MaxLength(500)]
         public string Artist { get; set; }
 
-        public string Audio { get; set; }
+        public DbSongFile Audio { get; set; }
 
         public TimeSpan? Gap { get; set; }
 
@@ -59,13 +60,13 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Songs
 
         public string Background { get; set; }
 
-        public string Video { get; set; }
+        public DbSongFile Video { get; set; }
 
         public TimeSpan? VideoGap { get; set; }
 
-        public string Vocals { get; set; }
+        public DbSongFile Vocals { get; set; }
 
-        public string Instrumental { get; set; }
+        public DbSongFile Instrumental { get; set; }
 
         public TimeSpan? PreviewStart { get; set; }
 
@@ -125,28 +126,18 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Songs
         [Required]
         public DateTime LastParseTime { get; set; }
 
-        [Required]
-        public BrowserCompatibility AudioCompatibility { get; set; } = BrowserCompatibility.NotChecked;
-
-        [Required]
-        public BrowserCompatibility VideoCompatibility { get; set; } = BrowserCompatibility.NotChecked;
-
-        [Required]
-        public BrowserCompatibility VocalsCompatibility { get; set; } = BrowserCompatibility.NotChecked;
-
-        [Required]
-        public BrowserCompatibility InstrumentalCompatibility { get; set; } = BrowserCompatibility.NotChecked;
-
         #endregion
 
         public string GetSongFilePath(FileType fileType)
         {
             var filePath = fileType switch
             {
-                FileType.Audio => Audio,
+                FileType.Audio => Audio?.FilePath,
                 FileType.Cover => Cover,
                 FileType.Background => Background,
-                FileType.Video => Video,
+                FileType.Video => Video?.FilePath,
+                FileType.Vocals => Vocals?.FilePath,
+                FileType.Instrumental => Instrumental?.FilePath,
                 _ => null
             };
 
@@ -159,42 +150,6 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Songs
             return !string.IsNullOrEmpty(songFilePath) && File.Exists(songFilePath);
         }
 
-        public bool IsSongFileCompatible(FileType fileType)
-        {
-            return fileType switch
-            {
-                FileType.Video => VideoCompatibility != BrowserCompatibility.ConversionMandatory,
-                FileType.Audio => AudioCompatibility != BrowserCompatibility.ConversionMandatory,
-                FileType.Instrumental => InstrumentalCompatibility != BrowserCompatibility.ConversionMandatory,
-                FileType.Vocals => VocalsCompatibility != BrowserCompatibility.ConversionMandatory,
-                _ => true
-            };
-        }
-
-        public void SetBrowserCompatibilityStatus(FileType fileType, BrowserCompatibility browserCompatibility)
-        {
-            if (fileType is FileType.Cover or FileType.Background)
-            {
-                return;
-            }
-
-            switch (fileType)
-            {
-                case FileType.Audio:
-                    AudioCompatibility = browserCompatibility;
-                    break;
-                case FileType.Video:
-                    VideoCompatibility = browserCompatibility;
-                    break;
-                case FileType.Instrumental:
-                    InstrumentalCompatibility = browserCompatibility;
-                    break;
-                case FileType.Vocals:
-                    VocalsCompatibility = browserCompatibility;
-                    break;
-            }
-        }
-
         public Song ToSong()
         {
             var songDto = new Song
@@ -204,16 +159,16 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Songs
                 Bpm = Bpm,
                 Title = Title,
                 Artist = Artist,
-                Audio = Audio,
+                Audio = Audio?.ToSongFileInfo(),
                 Gap = Gap,
                 Start = Start,
                 End = End,
                 Players = Players.Select(p => p.ToSongPlayer()).ToList(),
                 Cover = Cover,
                 Background = Background,
-                Video = Video,
-                Vocals = Vocals,
-                Instrumental = Instrumental,
+                Video = Video?.ToSongFileInfo(),
+                Vocals = Vocals?.ToSongFileInfo(),
+                Instrumental = Instrumental?.ToSongFileInfo(),
                 AudioUrl = AudioUrl,
                 VideoUrl = VideoUrl,
                 CoverUrl = CoverUrl,
@@ -234,19 +189,9 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Songs
                 LastParsedTime = LastParseTime,
                 HasFatal = Alerts.Any(a => a.Level == AlertLevel.Fatal),
                 HasErrors = Alerts.Any(a => a.Level == AlertLevel.Error),
-                HasWarnings = Alerts.Any(a => a.Level == AlertLevel.Warning),
-                AudioCompatibility = AudioCompatibility,
-                VideoCompatibility = VideoCompatibility,
-                VocalsCompatibility = VocalsCompatibility,
-                InstrumentalCompatibility = InstrumentalCompatibility
+                HasWarnings = Alerts.Any(a => a.Level == AlertLevel.Warning)
             };
             return songDto;
-        }
-
-        public bool IsNotLoadable()
-        {
-            return AudioCompatibility == BrowserCompatibility.ConversionMandatory ||
-                   Alerts.Any(a => a.Level == AlertLevel.Fatal);
         }
     }
 }

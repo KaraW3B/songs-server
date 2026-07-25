@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using KaraW3B.Server.Songs.Host.Providers.Songs;
 using KaraW3B.Server.Songs.Models.Songs;
 using KaraW3B.Server.Songs.Models.Songs.Alerts;
+using KaraW3B.Server.Songs.Models.Songs.Files;
 using KaraW3B.Server.Songs.Models.Songs.Notes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -108,12 +109,6 @@ namespace KaraW3B.Server.Songs.Host.Controllers
             if (!song.SongFileExist(fileType))
             {
                 return NotFound($"The {fileType} file doesn't exist for song with ID {songId}");
-            }
-
-            if (!song.IsSongFileCompatible(fileType))
-            {
-                return BadRequest(
-                    $"The file {fileType} for song {song.Id} isn't web player compatible");
             }
 
             return await _songsProvider.GetSongFileStream(song, fileType, cancellationToken);

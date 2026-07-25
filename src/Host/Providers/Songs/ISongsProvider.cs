@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using KaraW3B.Server.Songs.Core.Persistence.Models.Songs;
 using KaraW3B.Server.Songs.Models.Songs;
+using KaraW3B.Server.Songs.Models.Songs.Files;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KaraW3B.Server.Songs.Host.Providers.Songs

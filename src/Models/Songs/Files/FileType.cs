@@ -1,4 +1,4 @@
-﻿namespace KaraW3B.Server.Songs.Models.Songs
+﻿namespace KaraW3B.Server.Songs.Models.Songs.Files
 {
     /// <summary>
     ///     The available song's file types that can be streamed
