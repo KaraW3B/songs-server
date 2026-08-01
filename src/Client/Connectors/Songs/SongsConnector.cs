@@ -87,5 +87,28 @@ namespace KaraW3B.Client.Songs.Connectors.Songs
 
             return await response.Content.ReadAsStreamAsync(cancellationToken);
         }
+
+        public async Task<HttpResponseMessage> GetRawSongFileStreamAsync(Guid songId, FileType fileType, CancellationToken cancellationToken, Dictionary<string, IEnumerable<string>> customHeaders = null)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, _baseUri.AppendPath($"{songId}/streams/{fileType}"));
+
+            if (customHeaders != null)
+            {
+                foreach (var customHeader in customHeaders)
+                {
+                    request.Headers.Add(customHeader.Key, customHeader.Value);
+                }
+            }
+
+            var response =
+                await _httpClient.SendAsync(request, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new KaraW3BSongsClientException(
+                    $"Unable to get song file stream {fileType}: {await response.Content.ReadAsStringAsync(cancellationToken)}");
+            }
+
+            return response;
+        }
     }
 }

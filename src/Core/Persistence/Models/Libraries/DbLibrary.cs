@@ -35,6 +35,8 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Libraries
 
         public string LastAnalyzeMessage { get; set; }
 
+        public DateTime? LastAnalyzeTime { get; set; }
+
         public static async Task<bool> TryMarkAsPendingAsync(KaraW3BDbContext dbContext, Guid libraryId,
             CancellationToken cancellationToken)
         {
@@ -71,7 +73,8 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Libraries
                 .ExecuteUpdateAsync(s => s.
                     SetProperty(l => l.AnalyzeStatus,
                         isSuccess ? LibraryAnalyzeStatus.Success : LibraryAnalyzeStatus.Error)
-                    .SetProperty(l => l.LastAnalyzeMessage, message),
+                    .SetProperty(l => l.LastAnalyzeMessage, message)
+                    .SetProperty(l => l.LastAnalyzeTime, DateTime.Now),
                 cancellationToken: cancellationToken);
         }
 
@@ -84,7 +87,8 @@ namespace KaraW3B.Server.Songs.Core.Persistence.Models.Libraries
                 Description = Description,
                 Path = Path,
                 AnalyzeStatus = AnalyzeStatus,
-                LastAnalyzeMessage = LastAnalyzeMessage
+                LastAnalyzeMessage = LastAnalyzeMessage,
+                LastAnalyzeTime = LastAnalyzeTime
             };
         }
     }
