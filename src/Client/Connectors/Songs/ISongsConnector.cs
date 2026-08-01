@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using KaraW3B.Server.Songs.Models.Songs;
+﻿using KaraW3B.Server.Songs.Models.Songs;
 using KaraW3B.Server.Songs.Models.Songs.Alerts;
 using KaraW3B.Server.Songs.Models.Songs.Files;
 using KaraW3B.Server.Songs.Models.Songs.Notes;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace KaraW3B.Client.Songs.Connectors.Songs
 {
@@ -18,5 +19,8 @@ namespace KaraW3B.Client.Songs.Connectors.Songs
 
         Task<Stream> GetSongFileStreamAsync(Guid songId, FileType fileType,
             CancellationToken cancellationToken = default);
+
+        Task<HttpResponseMessage> GetRawSongFileStreamAsync(Guid songId, FileType fileType,
+            CancellationToken cancellationToken, Dictionary<string, IEnumerable<string>> customHeaders = null);
     }
 }

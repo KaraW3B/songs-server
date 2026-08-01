@@ -36,5 +36,10 @@ namespace KaraW3B.Server.Songs.Models.Libraries
         ///     The last analyze message
         /// </summary>
         public string LastAnalyzeMessage { get; init; }
+
+        /// <summary>
+        ///     The time when the last analyze occurred
+        /// </summary>
+        public DateTime? LastAnalyzeTime { get; init; }
     }
 }
