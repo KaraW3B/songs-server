@@ -77,14 +77,7 @@ namespace KaraW3B.Client.Songs.Connectors.Songs
         public async Task<Stream> GetSongFileStreamAsync(Guid songId, FileType fileType,
             CancellationToken cancellationToken)
         {
-            var response =
-                await _httpClient.GetAsync(_baseUri.AppendPath($"{songId}/streams/{fileType}"), cancellationToken);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new KaraW3BSongsClientException(
-                    $"Unable to get song file stream {fileType}: {await response.Content.ReadAsStringAsync(cancellationToken)}");
-            }
-
+            var response = await GetRawSongFileStreamAsync(songId, fileType, cancellationToken);
             return await response.Content.ReadAsStreamAsync(cancellationToken);
         }
 
