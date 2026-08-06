@@ -15,7 +15,7 @@ KaraW3B NuGets aims to simplify integration of KaraW3B songs server in thirdpart
 | Name                         | Content                                                     |
 |------------------------------|-------------------------------------------------------------|
 | KaraW3B.Server.Songs.Models  | Contains models used by the songs server API                |
-| KaraW3B.SDK.Songs.Client     | Contains connectors to easily call KaraW3B songs server API |
+| KaraW3B.Client.Songs         | Contains connectors to easily call KaraW3B songs server API |
 
 ## 🐋 How to run the container ?
 
