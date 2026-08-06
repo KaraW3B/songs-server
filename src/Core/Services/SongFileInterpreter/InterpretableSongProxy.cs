@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using KaraW3B.Interpreters.Interfaces;
+using KaraW3B.SDK.Helpers.Interfaces;
+using KaraW3B.SDK.Interpreters.Interfaces;
 using KaraW3B.Server.Songs.Core.Persistence.Models.Songs;
 
 namespace KaraW3B.Server.Songs.Core.Services.SongFileInterpreter

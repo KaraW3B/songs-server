@@ -1,5 +1,5 @@
 ﻿using System;
-using KaraW3B.Interpreters.Interfaces;
+using KaraW3B.SDK.Helpers.Interfaces;
 using KaraW3B.Server.Songs.Models.Songs;
 
 namespace KaraW3B.Server.Songs.Core.Persistence.Models.Songs
