@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using KaraW3B.Interpreters.Interfaces;
+using KaraW3B.SDK.Helpers.Interfaces;
 using KaraW3B.Server.Songs.Models.Songs.Notes;
 using Microsoft.EntityFrameworkCore;
 
