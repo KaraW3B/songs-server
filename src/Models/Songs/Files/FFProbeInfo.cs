@@ -1,4 +1,6 @@
-﻿namespace KaraW3B.Server.Songs.Models.Songs.Files
+﻿using System;
+
+namespace KaraW3B.Server.Songs.Models.Songs.Files
 {
     /// <summary>
     ///     Information get from FFprobe of the song file
@@ -20,13 +22,19 @@
         /// </summary>
         public string Codec { get; set; }
 
+        /// <summary>
+        ///     The duration of the stream
+        /// </summary>
+        public TimeSpan? Duration { get; set; }
+
         public FFProbeInfo Clone()
         {
             return new FFProbeInfo
             {
                 Codec = Codec,
                 Format = Format,
-                EncodedBy = EncodedBy
+                EncodedBy = EncodedBy,
+                Duration = Duration
             };
         }
     }

@@ -1,6 +1,4 @@
 ﻿using FFMpegCore;
-using FFMpegCore.Arguments;
-using KaraW3B.Server.Songs.Core.Helpers;
 using KaraW3B.Server.Songs.Core.Services.Settings;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +27,8 @@ namespace KaraW3B.Server.Songs.Core.Services.FFmpeg
             var songFile = new FFProbeInfo
             {
                 Format = mediaInfos.Format.FormatName.ToUpperInvariant(),
-                Codec = stream?.CodecName.ToUpperInvariant()
+                Codec = stream?.CodecName.ToUpperInvariant(),
+                Duration = stream?.Duration
             };
 
             if (mediaInfos.Format.Tags?.TryGetValue(EncodedByTag, out var encodedBy) ?? false)
